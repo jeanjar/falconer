@@ -7,7 +7,7 @@ use Falconer\Base\Form;
 class UsersForm extends Form
 {
     
-    public function initialize($user, array $options)
+    public function initialize($user, $options)
     {
         $this->setEntity($this);
         
