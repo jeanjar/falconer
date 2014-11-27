@@ -35,4 +35,9 @@ abstract class Form extends \Phalcon\Forms\Form
         $this->add(new Hidden("csrf"));
         
     }
+    
+    public function render()
+    {
+        
+    }
 }
