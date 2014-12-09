@@ -1,5 +1,9 @@
 <?php
 
+namespace Falconer\Exception\Definition;
+
+use Falconer\Exception;
+
 /**
  * Cdc Toolkit
  *
@@ -21,12 +25,10 @@
  * @package Cdc
  */
 
-namespace Falconer;
-
 /**
  * @codeCoverageIgnore
  */
-class Exception extends \Exception
+class DefinitionNotFound extends Exception
 {
-    
+
 }
