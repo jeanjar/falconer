@@ -128,7 +128,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         if (!$this->relation)
         {
-            if(isset($get['r']) && is_object($get['r']))
+            if(isse\Falconer\Helper\I18n::translate($get['r']) && is_objec\Falconer\Helper\I18n::translate($get['r']))
             {
                 $this->relation = $get['r'];
             } else {
@@ -148,7 +148,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         
         $datastore_name = $this->relation;
         
-        $di = \Phalcon\DI::getDefault();
+        $di = \Phalcon\DI::getDefaul\Falconer\Helper\I18n::translate();
         
         if (!($datastore_name instanceof \Falconer\Base\Model))
         {
@@ -166,9 +166,9 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         {
             $this->op = $datastore::OPERATION_DEFAULT;
         }
-
-        $definition = $this->datastore->getDefinition($this->op);
         
+        $definition = $this->datastore->getDefinition($this->op);
+
         if (!$this->primary)
         {
             $this->primary = $primary = $definition->query(\Falconer\Definition::TYPE_COLUMN)->byKey('primary')->fetch(\Falconer\Definition::MODE_SINGLE);
@@ -199,7 +199,101 @@ abstract class Crud extends \Phalcon\Mvc\Controller
     
     public function _create($update = false)
     {
-        
+        if ($this->formLegend)
+        {
+            $legend = $this->formLegend;
+        } else
+        {
+            if ($update)
+            {
+                $legend = \Falconer\Helper\I18n::translate('Editar item');
+            } else
+            {
+                $legend = \Falconer\Helper\I18n::translate('Novo item');
+            }
+        }
+        $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($this->relation . '_create');
+
+        $definition = $this->datastore->getDefinition();
+        if ($this->_server['REQUEST_METHOD'] == 'POST')
+        {
+
+            $ruleQueryResult = $definition->query(Cdc_Definition::TYPE_RULE)->fetch();
+            $rules = new Cdc_Rule($ruleQueryResult);
+            if ($rules->invoke($this->input))
+            {
+                if ($update)
+                {
+                    if (!$this->itemWhere)
+                    {
+                        throw new Exception_UnspecifiedItem;
+                    }
+                    $sql = $this->datastore->createQuery(array('cols' => $this->input, 'where' => $this->itemWhere));
+                    $msg = $this->msgUpdate ? $this->msgUpdate : 'O registro foi atualizado.';
+                    $callbackIndex = Base_Crud::EVENT_AFTER_UPDATE_SUCCESS;
+                } else
+                {
+                    $sql = $this->datastore->createQuery($this->input);
+                    $msg = $this->msgCreate ? $this->msgCreate : 'O registro foi criado.';
+                    $callbackIndex = Base_Crud::EVENT_AFTER_CREATE_SUCCESS;
+                }
+
+                $this->datastore->getPdo()->beginTransaction();
+                try
+                {
+                    $id = $this->datastore->hydrateResultOfExec($sql, $this->input);
+                    $this->handleUploads($id, null, $update ? 'update' : 'create');
+                    $this->runCallbacks($callbackIndex, $id);
+
+                    if ($this->showRelationResults)
+                    {
+                        $sql = $this->datastore_relation->generateRelationQuery($this->relation_id, $id);
+                        $this->datastore_relation->hydrateResultOfExec($sql);
+                    }
+
+                    $this->datastore->getPdo()->commi\Falconer\Helper\I18n::translate();
+                    if ($this->flashEnabled)
+                    {
+                        flash($msg);
+                    }
+                    if ($this->redirect)
+                    {
+                        $this->redirectUpdate or $this->redirectUpdate = $this->link('admin', array('r' => $this->relation), array('op' => 'update', $this->primary => $id));
+                        header('Location: ' . $this->redirectUpdate);
+                        die;
+                    }
+                    return (int) $id;
+                } catch (Exception $e)
+                {
+                    SqlExceptionTranslator::translate($e);
+//                    even\Falconer\Helper\I18n::translate($e->getMessage(), LOG_ERR);
+                    $this->datastore->getPdo()->rollBack();
+                }
+            } else
+            {
+                Cdc_ConstraintMessagePrinter::even\Falconer\Helper\I18n::translate($rules->getMessages(), C::$labels);
+            }
+        }
+
+        $def = $definition->query(Cdc_Definition::TYPE_WIDGET)->fetch();
+        if ($this->options)
+        {
+            $options = array_merge(array('controller' => $this, 'legend' => $legend), $this->options);
+            $form = new $this->formClass($def, $options, $this->input);
+        } else
+        {
+
+            $form = new $this->formClass($def, array('controller' => $this, 'legend' => $legend), $this->input);
+        }
+
+        if ($this->formTemplate)
+        {
+            $template = $this->getTemplate($this->formTemplate);
+        } else
+        {
+            $template = null;
+        }
+        return $form->render($template);
     }
     
     public function _update()

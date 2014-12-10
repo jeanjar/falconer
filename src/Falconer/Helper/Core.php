@@ -46,4 +46,21 @@ class Core
         }
         return filter_input($type, $variable_name, $filter, $options);
     }
+    
+    public static function label($index, $labels = array())
+    {
+        if (!$labels)
+        {
+            $labels = C::$labels;
+        }
+
+        if (isset($labels[$index]))
+        {
+            if (is_string($labels[$index]))
+            {
+                return ucfirst($labels[$index]);
+            }
+        }
+        return $index;
+    }
 }
