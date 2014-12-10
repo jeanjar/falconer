@@ -4,6 +4,7 @@ namespace Falconer\Base;
 
 use Phalcon\Forms\Element\Hidden;
 use Falconer\Definition;
+use Falconer\Helper\Core;
 
 class Form extends \Phalcon\Forms\Form
 {
@@ -225,8 +226,8 @@ class Form extends \Phalcon\Forms\Form
                             $emptySelectLabel = '[Escolha uma opção...]';
                         }
 
-                        $emptyOptionNotSelected = '<option value="">' . label($emptySelectLabel) . '</option>';
-                        $emptyOptionSelected = '<option value="" selected="selected">' . label($emptySelectLabel) . '</option>';
+                        $emptyOptionNotSelected = '<option value="">' . Core::label($emptySelectLabel) . '</option>';
+                        $emptyOptionSelected = '<option value="" selected="selected">' . Core::label($emptySelectLabel) . '</option>';
                         unset($v['required']);
                     }
                     else
@@ -261,7 +262,7 @@ class Form extends \Phalcon\Forms\Form
                     // $v['name'] .= '[]';
                     // $widgets[$k] = '<input ' . $this->_attribs(array_merge($v, array('type' => 'hidden'))) . '>';
                     // $widgets[$k] = $this->_getFm()->renderLinks($v);
-                    $widgets[$k] = '<div class="clearfix file_area ' . $v['name'] . '">' . $filemanager_hidden . '<button class="btn">' . label('Adicionar') . '</button><div class="sortable list"></div></div>';
+                    $widgets[$k] = '<div class="clearfix file_area ' . $v['name'] . '">' . $filemanager_hidden . '<button class="btn">' . Core::label('Adicionar') . '</button><div class="sortable list"></div></div>';
                     break;
                 case 'checkboxes':
                     $val = $v['value'];
@@ -453,7 +454,7 @@ class Form extends \Phalcon\Forms\Form
     {
         $value = null;
 
-        $data_format = f($def, 'data_format');
+        $data_format = Core::filter($def, 'data_format');
         if (is_array($def) && array_key_exists(Definition::TYPE_WIDGET, $def))
         {
             $input_keys = array_key_exists('input_keys', $def[Definition::TYPE_WIDGET]) ? array_flip($def[Definition::TYPE_WIDGET]['input_keys']) : array();
@@ -548,7 +549,7 @@ class Form extends \Phalcon\Forms\Form
     protected function _attribs($attribs, $troncho = false)
     {
 
-        $value = f($attribs, 'value');
+        $value = Core::filter($attribs, 'value');
         unset($attribs['crud']);
         unset($attribs['n2n']);
         unset($attribs['value']);
@@ -646,7 +647,7 @@ class Form extends \Phalcon\Forms\Form
 
         $renderedWidgets = array();
 
-        $legend = f($options, 'legend');
+        $legend = Core::filter($options, 'legend');
 
         extract($options);
 
@@ -697,24 +698,14 @@ class Form extends \Phalcon\Forms\Form
         return ob_get_clean();
     }
 
-}
+    public function getCsrf()
+    {
+        return $this->security->getToken();
+    }
 
-//class Form extends \Phalcon\Forms\Form
-//{
-//
-//    public function getCsrf()
-//    {
-//        return $this->security->getToken();
-//    }
-//
-//    public function initialize()
-//    {
-//        $this->add(new Hidden("csrf"));
-//    }
-//
-//    public function render()
-//    {
-//        
-//    }
-//
-//}
+    public function initialize()
+    {
+        $this->add(new Hidden("csrf"));
+    }
+
+}

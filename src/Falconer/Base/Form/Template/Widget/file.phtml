@@ -1,0 +1,81 @@
+<div class="element <?php echo $key; ?> form-group clearfix">
+    <label class="col-sm-3 control-label no-padding-right" for="<?php echo $key; ?>"><?php echo label($key); ?><?php echo required($def[$key]); ?>:</label>
+    <div class="col-sm-9">
+        <table class="table-striped table-bordered table">
+            <caption></caption>
+            <thead>
+                <tr>
+                    <th>Arquivo</th>
+                    <th>Opções</th>
+                </tr>
+            </thead>
+            <?php if (!empty($input) and isset($input[$key]) and $input[$key]): ?>
+                <tbody>
+                    <?php foreach (Cdc_ArrayHelper::current($input[$key]) as $id => $item): ?>
+                        <?php if ($item['arquivo_tipo_id'] == ArquivoTipo::IMAGE): ?>
+                            <tr data-id="<?php echo $id; ?>">
+                                <td style="vertical-align: middle; width: 70px">
+                                    <a href="<?php echo C::$upload . $key . '/__expand__/' . $item['nome']; ?>" class="preview" data-rel="bootbox" title="<?php echo $item['titulo']; ?>"><img src="<?php echo C::$upload . $key . '/__thumbnail__/' . $item['nome']; ?>"></a>
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <button class="btn btn-danger delete-upload" data-id="<?php echo $id; ?>"><i class="icon-trash"></i> Excluir este arquivo</button>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <tr data-id="<?php echo $id; ?>">
+                                <td style="vertical-align: middle;">
+                                    <a href="<?php echo C::$upload . $key . '/' . $item['nome']; ?>" title="<?php echo $item['titulo']; ?>" target="_blank"><img src="<?php echo C::$root . 'assets/skins/backoffice/images/filetypes/' . $item['arquivo_tipo_id'] . '.png'; ?>">&nbsp;<?php echo $item['nome_original']; ?></a>
+                                </td>
+                                <td style="vertical-align: middle">
+                                    <button class="btn btn-danger delete-upload" data-id="<?php echo $id; ?>"><i class="icon-trash"></i> Excluir este arquivo</button>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </tbody>
+            <?php endif; ?>
+            <tfoot>
+                <tr>
+                    <th class="upload-widget-container" colspan="2">
+                        <?php echo $widget; ?>
+                    </th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    <div class = "space-4"></div>
+</div>
+<script>
+    $(function() {
+        $('.delete-upload').on('click', function(e) {
+            e.preventDefault();
+
+            var diz = $(this),
+                struct_upload_ids = {};
+
+            var id = diz.attr('data-id');
+
+            struct_upload_ids[diz.parents('table').find('.upload-widget-container input').attr('name')] = id;
+
+            bootbox.dialog({
+                message: 'Esta ação não pode ser desfeita. Deseja realmente excluir este arquivo?',
+                title: 'Excluir arquivo',
+                buttons: {
+                    cancel: {
+                        label: 'Voltar',
+                        className: 'btn'
+                    },
+                    main: {
+                        label: '<i class="icon-trash"></i> Excluir permanentemente',
+                        className: 'btn btn-danger',
+                        callback: function() {
+                            $.post('<?php echo $_SERVER['REQUEST_URI']; ?>', {upload_ids: struct_upload_ids, 'delete-upload': true}, function() {
+                                diz.parents('tr[data-id="' + id + '"]').fadeOut();
+                            });
+                        }
+                    }
+                }
+            });
+        });
+    });
+</script>

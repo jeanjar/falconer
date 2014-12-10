@@ -1,0 +1,33 @@
+<div class="row-fluid">
+    <div class="span-12">
+        <div class="box">
+            <div class="box-head">
+                <i class="<?php echo $formIcon; ?>"></i>
+                <span><?php echo $formName; ?></span>
+            </div>
+            <div class="box-body box-body-nopadding">
+                <form class="smart-form form-horizontal" method="get" action="" enctype="multipart/form-data" class="form">
+                    <fieldset>
+                        <?php
+                        $chunks = array_chunk($renderedWidgets, 3);
+                        foreach ($chunks as $chunk)
+                        {
+                            ?>
+                            <div class="row">
+                                <?php
+                                foreach ($chunk as $widget)
+                                {
+                                    echo $widget;
+                                }
+                                ?>
+                            </div>
+                            <?php
+                        }
+                        ?>                        
+                    </fieldset>
+                    <?php echo $submit; ?>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

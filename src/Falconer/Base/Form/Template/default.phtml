@@ -1,0 +1,9 @@
+<form class="form-horizontal" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <legend><?php echo $formName; ?></legend>
+        <?php foreach ($renderedWidgets as $widget): ?>
+            <?php echo $widget; ?>                                                            
+        <?php endforeach; ?>       
+    </fieldset>
+    <?php echo $submit; ?>
+</form>

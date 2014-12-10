@@ -5,7 +5,7 @@ include '../../vendor/autoload.php';
 $def = [
     'type_primary' => [
         Falconer\Definition::TYPE_WIDGET => [
-            'widget' => 'hiden',
+            'widget' => 'hidden',
         ],
     ],
     'type_text' => [

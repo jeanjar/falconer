@@ -1,0 +1,21 @@
+<?php
+$label = Falconer\Helper\Core::label($key);
+
+if (!$search)
+{
+    $label .= Falconer\Helper\Core::required($def[$key]);
+}
+
+if (array_key_exists(Falconer\Definition::TYPE_WIDGET, $def[$key][Falconer\Definition::TYPE_WIDGET]) && $def[$key][Falconer\Definition::TYPE_WIDGET][Falconer\Definition::TYPE_WIDGET] == 'hidden'):
+
+    echo $widget;
+
+else:
+    ?>    
+    <div class="form-group">
+        <label for="<?php echo $key; ?>" class="col-md-2 control-label"><?php echo $label;?></label>
+        <div class="col-md-10">
+            <?php echo $widget; ?>
+        </div>
+    </div>
+<?php endif; ?>

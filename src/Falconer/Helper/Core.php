@@ -2,8 +2,11 @@
 
 namespace Falconer\Helper;
 
+use Falconer\Definition;
+
 class Core
 {
+
     public static function coalesce(/* ... */)
     {
         $args = func_get_args();
@@ -33,7 +36,7 @@ class Core
         }
         return $mask;
     }
-    
+
     public static function filter($type, $variable_name, $filter = FILTER_DEFAULT, $options = null)
     {
         if (is_array($type))
@@ -46,12 +49,12 @@ class Core
         }
         return filter_input($type, $variable_name, $filter, $options);
     }
-    
+
     public static function label($index, $labels = array())
     {
         if (!$labels)
         {
-            $labels = C::$labels;
+            $labels = [];
         }
 
         if (isset($labels[$index]))
@@ -63,4 +66,22 @@ class Core
         }
         return $index;
     }
+
+    function required($def, $requiredText = '<span class="required_token"> *</span>')
+    {
+        if (isset($def[Definition::TYPE_WIDGET]['attributes']['required']))
+        {
+            return $requiredText;
+        }
+
+        if (array_key_exists(Definition::TYPE_RULE, $def))
+        {
+            $index = array_search(array('Rule_Required'), $def[Definition::TYPE_RULE]);
+            if ($index !== false)
+            {
+                return $requiredText;
+            }
+        }
+    }
+
 }
