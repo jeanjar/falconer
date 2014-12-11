@@ -2,7 +2,7 @@
 
 namespace Falconer\Base;
 
-use Falconer\Exception\Base\TemplateDoesNotExist;
+use Falconer\Exception\Template\TemplateDoesNotExist;
 use Falconer\Helper\Core;
 
 class Table
@@ -75,33 +75,33 @@ class Table
      */
     public function render($caption, $lista, $pager = null, array $options = array(), array $formatters = array(), array $provider = array(), array $skip = array(), $indexCheck = null, $indexTrClass = null, array $subTable = array())
     {
-        if ($lista instanceof PDOStatement)
-        {
-            $lista = $lista->fetchAll();
-        }
-
-        if ($provider)
-        {
-            $provider = current($provider);
-            $p_func = reset($provider);
-
-            if (isset($provider[1]))
-            {
-                $p_params = $provider[1];
-            }
-            else
-            {
-                $p_params = array();
-            }
-
-            $lista = call_user_func_array($p_func, array($lista, $p_params));
-        }
-
-        $tableDef = [
-            'thead' => $this->buildThead(array_keys(reset($lista))),
-            'tbody' => $this->buildTbody($lista, $formatters, $options),
-            'tfooter' => $this->buildTfoot($pager),
-        ];
+//        if ($lista instanceof PDOStatement)
+//        {
+//            $lista = $lista->fetchAll();
+//        }
+//
+//        if ($provider)
+//        {
+//            $provider = current($provider);
+//            $p_func = reset($provider);
+//
+//            if (isset($provider[1]))
+//            {
+//                $p_params = $provider[1];
+//            }
+//            else
+//            {
+//                $p_params = array();
+//            }
+//
+//            $lista = call_user_func_array($p_func, array($lista, $p_params));
+//        }
+//
+//        $tableDef = [
+//            'thead' => $this->buildThead(array_keys(reset($lista))),
+//            'tbody' => $this->buildTbody($lista, $formatters, $options),
+//            'tfooter' => $this->buildTfoot($pager),
+//        ];
     }
 
 }

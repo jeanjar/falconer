@@ -1,6 +1,6 @@
 <?php
 
-namespace Falconer\Exception\Base;
+namespace Falconer\Exception\Template;
 
 use Falconer\Exception;
 
