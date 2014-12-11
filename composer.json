@@ -8,6 +8,10 @@
         {
             "name":     "Stefan Yohansson da Silva Areeira Pinto",
             "homepage": "https://github.com/StefanYohansson"
+        },
+        {
+            "name":     "Jean Jar Pereira de Araújo",
+            "homepage": "https://github.com/jeanjar"
         }
     ],
     "require":      {
