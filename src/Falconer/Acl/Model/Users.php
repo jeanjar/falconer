@@ -9,20 +9,20 @@ Phalcon\Mvc\Model\Relation;
 
 class Users extends \Falconer\Base\Model
 {
-    
+
     const GENDER_MALE = 1;
     const GENDER_FEMALE = 2;
-    
+
     public static $genderMap = array(
         self::GENDER_MALE => 'Male',
         self::GENDER_FEMALE => 'Female'
     );
-    
+
     public function getSource()
     {
         return "users";
     }
-    
+
     public function initialize()
     {
         $this->skipAttributesOnCreate(array('created_at'));
@@ -33,7 +33,7 @@ class Users extends \Falconer\Base\Model
             'action' => Relation::ACTION_CASCADE
         )));
     }
-    
+
     public function getStruct() {
         return $this->struct = array(
             'users' => array(
@@ -53,7 +53,7 @@ class Users extends \Falconer\Base\Model
                     ),
                 ),
             ),
-            
+
             //
             'id' => array(
                 'type' => \Falconer\Definition::TYPE_COLUMN,
@@ -69,6 +69,9 @@ class Users extends \Falconer\Base\Model
             ),
             'nome' => array(
                 'type' => \Falconer\Definition::TYPE_COLUMN,
+                \Falconer\Definition::TYPE_WIDGET => array(
+                    'type' => 'text'
+                ),
                 \Falconer\Definition::OPERATION => array(
                     'read' => array(),
                     'item' => array(),
@@ -79,17 +82,17 @@ class Users extends \Falconer\Base\Model
             ),
         );
     }
-    
+
     public function getGroups($params=null)
     {
         return $this->getRelated('Groups', $params);
     }
-    
+
     public function getResources($params=null)
     {
         return $this->getRelated('Resources', $params);
     }
-    
+
     public function validation()
     {
         $this->validate(new Uniqueness(
@@ -98,25 +101,25 @@ class Users extends \Falconer\Base\Model
                 'message' => 'The username must be unique'
             )
         ));
-        
+
         $this->validate(new Uniqueness(
             array(
                 "field" => 'email',
                 'message' => 'The email must be unique'
             )
         ));
-        
+
         $this->validate(new InclusionIn(
             array(
                 "field" => "gender",
                 "domain" => array(self::GENDER_MALE, self::GENDER_FEMALE)
             )
         ));
-        
+
         if ($this->validationHasFailed() == true) {
             return false;
         }
 
     }
-    
+
 }

@@ -143,7 +143,7 @@ class Definition
         $this->setDefinition($definition);
         $this->setOperation($operation);
     }
-    
+
     /**
      * Obter a estrutura de definição atual.
      *
@@ -336,7 +336,7 @@ class Definition
         {
             foreach ($result as $key => $value)
             {
-                $result[$key] = Cdc_ArrayHelper::array_merge_recursive_distinct($value, $value[self::OPERATION][$this->getOperation()]);
+                $result[$key] = \Falconer\Helper\ArrayHelper::array_merge_recursive_distinct($value, $value[self::OPERATION][$this->getOperation()]);
 
                 unset($result[$key][self::OPERATION]);
             }

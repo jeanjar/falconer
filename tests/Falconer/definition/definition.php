@@ -4,5 +4,6 @@ include(dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '
 
 $user = new \Falconer\Acl\Model\Users($di);
 $definition = $user->getDefinition('create');
+$def = $definition->query(\Falconer\Definition::TYPE_WIDGET)->fetch();
 
-var_dump($definition);die;
+var_dump($def);die;
