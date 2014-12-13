@@ -13,7 +13,7 @@ before_script:
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --dev
 
-script: ZEND_DONT_UNLOAD_MODULES=1 $(phpenv which php) ./tests/Falconer/ci/phpunit.php --debug -c tests/Falconer/phpunit.xml
+script: (cd tests/Falconer ; ZEND_DONT_UNLOAD_MODULES=1 $(phpenv which php) ci/phpunit.php --debug -c phpunit.xml)
 
 notifications:
   on_success: always

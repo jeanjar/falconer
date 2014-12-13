@@ -19,9 +19,8 @@
 	<testsuites>
 		<testsuite name="Falconer">
 
-			<!-- Basic Components -->
-			<file>tests/Falconer/InitTest.php</file>
-			
+			<file>InitTest.php</file>
+
 		</testsuite>
 	</testsuites>
 </phpunit>
