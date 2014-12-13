@@ -4,14 +4,14 @@ namespace Falconer\Base;
 
 abstract class Crud extends \Phalcon\Mvc\Controller
 {
-    
+
     public $searchFormEnabled = true;
     public $columnsTableVisible = array();
     public $showOptions = true;
     public $showAllOptions = true;
     public $flashEnabled = true;
     public $formLegend = false;
-    public $formClass = 'Cdc_Form';
+    public $formClass = '\\Falconer\\Base\\Form';
     public $showRelationResults = false;
     public $urlParams;
 
@@ -86,6 +86,8 @@ abstract class Crud extends \Phalcon\Mvc\Controller
      *
      * @var array Dados sendo crudados. Interno
      */
+    public $index;
+    public $pageTitle;
     public $input = array();
     public $itemWhere;
     public $searchFormTemplate;
@@ -107,7 +109,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
     public $msgDelete;
     public $tableInBox;
     public $tableInBoxTitle;
-    
+
     public function resetCrud()
     {
         $this->filters = $this->filterData = $this->order = $this->callbacks = array();
@@ -116,7 +118,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         $this->searchFormEnabled = true;
     }
-    
+
     public function configureCrud($get, $post, $reset = true)
     {
         if ($reset)
@@ -128,7 +130,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         if (!$this->relation)
         {
-            if(isse\Falconer\Helper\I18n::translate($get['r']) && is_objec\Falconer\Helper\I18n::translate($get['r']))
+            if(isset($get['r']) && is_object($get['r']))
             {
                 $this->relation = $get['r'];
             } else {
@@ -140,16 +142,16 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         {
             $this->op = \Falconer\Helper\Core::filter($get, 'op');
         }
-        
+
         if (!$this->relation)
         {
             throw new \Falconer\Exception\Base\CrudWithoutRelation;
         }
-        
+
         $datastore_name = $this->relation;
-        
-        $di = \Phalcon\DI::getDefaul\Falconer\Helper\I18n::translate();
-        
+
+        $di = \Phalcon\DI::getDefault();
+
         if (!($datastore_name instanceof \Falconer\Base\Model))
         {
             $datastore = $this->datastore = new $datastore_name($di);
@@ -161,44 +163,46 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         {
             throw new \Falconer\Exception\Base\IncorrectDatastoreInheritance;
         }
-        
+
         if (!$this->op)
         {
             $this->op = $datastore::OPERATION_DEFAULT;
         }
-        
+
         $definition = $this->datastore->getDefinition($this->op);
 
         if (!$this->primary)
         {
             $this->primary = $primary = $definition->query(\Falconer\Definition::TYPE_COLUMN)->byKey('primary')->fetch(\Falconer\Definition::MODE_SINGLE);
         }
-        
+
         if (!$this->id)
         {
             $this->id = \Falconer\Helper\Core::filter($get, $this->primary);
         }
-        
+
         if (!$this->index)
         {
             $this->index = $this->relation;
         }
-        
+
         if ($this->id)
         {
-            
+
         } else {
             $this->input = $post;
         }
     }
-    
+
     public function _read()
     {
-        
+
     }
-    
+
     public function _create($update = false)
     {
+        $request = new \Phalcon\Http\Request();
+
         if ($this->formLegend)
         {
             $legend = $this->formLegend;
@@ -215,7 +219,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($this->relation . '_create');
 
         $definition = $this->datastore->getDefinition();
-        if ($this->_server['REQUEST_METHOD'] == 'POST')
+        if ($request->isPost() == true)
         {
 
             $ruleQueryResult = $definition->query(Cdc_Definition::TYPE_RULE)->fetch();
@@ -251,7 +255,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
                         $this->datastore_relation->hydrateResultOfExec($sql);
                     }
 
-                    $this->datastore->getPdo()->commi\Falconer\Helper\I18n::translate();
+                    $this->datastore->getPdo()->commit();
                     if ($this->flashEnabled)
                     {
                         flash($msg);
@@ -271,11 +275,11 @@ abstract class Crud extends \Phalcon\Mvc\Controller
                 }
             } else
             {
-                Cdc_ConstraintMessagePrinter::even\Falconer\Helper\I18n::translate($rules->getMessages(), C::$labels);
+                Cdc_ConstraintMessagePrinter::event($rules->getMessages(), C::$labels);
             }
         }
 
-        $def = $definition->query(Cdc_Definition::TYPE_WIDGET)->fetch();
+        $def = $definition->query(\Falconer\Definition::TYPE_WIDGET)->fetch();
         if ($this->options)
         {
             $options = array_merge(array('controller' => $this, 'legend' => $legend), $this->options);
@@ -295,15 +299,15 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         }
         return $form->render($template);
     }
-    
+
     public function _update()
     {
         return $this->_create(true);
     }
-    
+
     public function _delete()
     {
-        
+
     }
-    
+
 }
