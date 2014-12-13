@@ -20,6 +20,8 @@
 		<testsuite name="Falconer">
 
 			<file>InitTest.php</file>
+            <file>form/FormTest.php</file>
+            <file>form/TableTest.php</file>
 
 		</testsuite>
 	</testsuites>
