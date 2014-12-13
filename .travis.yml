@@ -8,7 +8,7 @@ before_install:
   - sudo apt-add-repository -y ppa:phalcon/stable
   - sudo apt-get update -qq
   - sudo apt-get install -y php5-phalcon
-  - echo "extension=phalcon.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - sudo updatedb ; sudo locate phalcon.so >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 before_script:
   - travis_retry composer self-update
