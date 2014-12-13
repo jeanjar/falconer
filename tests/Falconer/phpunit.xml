@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<phpunit backupGlobals="false"
+	backupStaticAttributes="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	processIsolation="false"
+	stopOnFailure="false"
+	syntaxCheck="true"
+	strict="true"
+	timeoutForSmallTests="10"
+	timeoutForMediumTests="50"
+	imeoutForLargeTests="600">
+	<php>
+		<ini name="report_memleaks" value="on"/>
+	</php>
+	<testsuites>
+		<testsuite name="Falconer">
+
+			<!-- Basic Components -->
+			<file>tests/Falconer/InitTest.php</file>
+			
+		</testsuite>
+	</testsuites>
+</phpunit>

@@ -5,10 +5,12 @@ php:
   - hhvm
 
 before_script:
+  - git clone -q https://github.com/phalcon/cphalcon.git
+  - (cd cphalcon/build; sudo ./install && phpenv config-add ../../tests/phalcon.ini)
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --dev
 
-script: vendor/bin/phpunit --verbose
+script: ZEND_DONT_UNLOAD_MODULES=1 $(phpenv which php) ./tests/Falconer/ci/phpunit.php --debug -c tests/Falconer/phpunit.xml
 
 matrix:
   allow_failures:
