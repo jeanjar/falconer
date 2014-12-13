@@ -2,6 +2,8 @@
 
 namespace Falconer\Base;
 
+use Phalcon\Mvc\Model\Transaction\Manager as TransactionManager;
+
 abstract class Crud extends \Phalcon\Mvc\Controller
 {
 
@@ -250,12 +252,14 @@ abstract class Crud extends \Phalcon\Mvc\Controller
                     $msg = $this->msgCreate ? $this->msgCreate : 'O registro foi criado.';
                 }
 
-                $this->datastore->getPdo()->beginTransaction();
+                $transactionManager = new TransactionManager();
+                $transaction = $transactionManager->get();
+                $this->datastore->setTransaction($transaction);
                 try
                 {
                     $id = $this->datastore->hydrateResultOfExec($sql, $this->input);
 
-                    $this->datastore->getPdo()->commit();
+                    $transaction->commit();
                     if ($this->flashEnabled)
                     {
                         $this->flash->success($msg);
@@ -267,10 +271,10 @@ abstract class Crud extends \Phalcon\Mvc\Controller
                         die;
                     }
                     return (int) $id;
-                } catch (\Exception $e)
+                } catch (\Phalcon\Mvc\Model\Transaction\Failed $e)
                 {
                     $this->flash->error($e->getMessage());
-                    $this->datastore->getPdo()->rollBack();
+                    $transaction->rollback();
                 }
             } else
             {
