@@ -2,20 +2,22 @@ language: php
 php:
   - 5.5
   - 5.4
-  - hhvm
+
+services:
+  - memcached
+
+before_install:
+  - phpenv config-add tests/memcache.ini
+  - sudo apt-get update -qq
+  - sudo apt-add-repository -y ppa:phalcon/stable
+  - sudo apt-get update -qq
+  - sudo apt-get install -y php5-phalcon
 
 before_script:
-  - git clone -q https://github.com/phalcon/cphalcon.git
-  - (cd cphalcon/build; sudo ./install && phpenv config-add ../../tests/phalcon.ini)
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --dev
 
 script: ZEND_DONT_UNLOAD_MODULES=1 $(phpenv which php) ./tests/Falconer/ci/phpunit.php --debug -c tests/Falconer/phpunit.xml
-
-matrix:
-  allow_failures:
-    - php: hhvm
-  fast_finish: true
 
 notifications:
   on_success: always
