@@ -67,7 +67,7 @@ class Core
         return $index;
     }
 
-    function required($def, $requiredText = '<span class="required_token"> *</span>')
+    public static function required($def, $requiredText = '<span class="required_token"> *</span>')
     {
         if (isset($def[Definition::TYPE_WIDGET]['attributes']['required']))
         {
