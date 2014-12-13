@@ -110,6 +110,12 @@ abstract class Crud extends \Phalcon\Mvc\Controller
     public $tableInBox;
     public $tableInBoxTitle;
 
+    /**
+     *  @var closures
+     */
+
+    public $create_save;
+
     public function resetCrud()
     {
         $this->filters = $this->filterData = $this->order = $this->callbacks = array();
@@ -219,46 +225,40 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($this->relation . '_create');
 
         $definition = $this->datastore->getDefinition();
-        if ($request->isPost() == true)
-        {
 
+        if($this->create_save instanceof Closure)
+        {
+            $this->create_save->__invoke();
+        }
+        else if ($request->isPost() == true)
+        {
             $ruleQueryResult = $definition->query(Cdc_Definition::TYPE_RULE)->fetch();
-            $rules = new Cdc_Rule($ruleQueryResult);
+            $rules = new \Falconer\Rule($ruleQueryResult);
             if ($rules->invoke($this->input))
             {
                 if ($update)
                 {
                     if (!$this->itemWhere)
                     {
-                        throw new Exception_UnspecifiedItem;
+                        throw new \Falconer\Base\Crud\UnspecifiedItem;
                     }
                     $sql = $this->datastore->createQuery(array('cols' => $this->input, 'where' => $this->itemWhere));
                     $msg = $this->msgUpdate ? $this->msgUpdate : 'O registro foi atualizado.';
-                    $callbackIndex = Base_Crud::EVENT_AFTER_UPDATE_SUCCESS;
                 } else
                 {
                     $sql = $this->datastore->createQuery($this->input);
                     $msg = $this->msgCreate ? $this->msgCreate : 'O registro foi criado.';
-                    $callbackIndex = Base_Crud::EVENT_AFTER_CREATE_SUCCESS;
                 }
 
                 $this->datastore->getPdo()->beginTransaction();
                 try
                 {
                     $id = $this->datastore->hydrateResultOfExec($sql, $this->input);
-                    $this->handleUploads($id, null, $update ? 'update' : 'create');
-                    $this->runCallbacks($callbackIndex, $id);
-
-                    if ($this->showRelationResults)
-                    {
-                        $sql = $this->datastore_relation->generateRelationQuery($this->relation_id, $id);
-                        $this->datastore_relation->hydrateResultOfExec($sql);
-                    }
 
                     $this->datastore->getPdo()->commit();
                     if ($this->flashEnabled)
                     {
-                        flash($msg);
+                        $this->flash->success($msg);
                     }
                     if ($this->redirect)
                     {
@@ -267,15 +267,15 @@ abstract class Crud extends \Phalcon\Mvc\Controller
                         die;
                     }
                     return (int) $id;
-                } catch (Exception $e)
+                } catch (\Exception $e)
                 {
-                    SqlExceptionTranslator::translate($e);
-//                    even\Falconer\Helper\I18n::translate($e->getMessage(), LOG_ERR);
+                    $this->flash->error($e->getMessage());
                     $this->datastore->getPdo()->rollBack();
                 }
             } else
             {
-                Cdc_ConstraintMessagePrinter::event($rules->getMessages(), C::$labels);
+                $messages = \Falconer\Rule\MessagePrinter::event($rules->getMessages(), C::$labels);
+                $this->flash->error($messages);
             }
         }
 

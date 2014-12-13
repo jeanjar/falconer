@@ -28,3 +28,7 @@ $di->setShared('db',
         $db        = new $className($options);
         return $db;
     });
+
+$di->set('flash', function() {
+    return new \Phalcon\Flash\Direct();
+});
