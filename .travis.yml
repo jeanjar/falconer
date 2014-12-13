@@ -3,11 +3,7 @@ php:
   - 5.5
   - 5.4
 
-services:
-  - memcached
-
 before_install:
-  - phpenv config-add tests/memcache.ini
   - sudo apt-get update -qq
   - sudo apt-add-repository -y ppa:phalcon/stable
   - sudo apt-get update -qq
