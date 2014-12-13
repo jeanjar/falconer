@@ -5,12 +5,11 @@ php:
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-add-repository -y ppa:phalcon/stable
-  - sudo apt-get update -qq
-  - sudo apt-get install -y php5-phalcon locate
-  - sudo updatedb ; sudo locate phalcon.so >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - sudo apt-get install -y php5-dev php5-mysql gcc libpcre3-dev
 
 before_script:
+  - git clone --depth=1 git://github.com/phalcon/cphalcon.git
+  - (cd cphalcon/build; sudo ./install && phpenv config-add ../../tests/phalcon.ini)
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --dev
 
