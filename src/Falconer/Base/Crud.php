@@ -33,25 +33,25 @@ abstract class Crud extends \Phalcon\Mvc\Controller
      *
      * @var string Operation
      */
-    public $op;
+    public $operation;
 
     /**
      *
      * @var string Página
      */
-    public $p;
+    public $page;
 
     /**
      *
      * @var string Limite por página
      */
-    public $l;
+    public $limit;
 
     /**
      *
-     * @var string Id do registro sendo crudado
+     * @var string identifier do registro sendo crudado
      */
-    public $id;
+    public $identifier;
 
     /**
      *
@@ -82,7 +82,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
      * @var array Opções personalizadas
      */
     public $options = null;
-    public $relation_id = null;
+    public $relation_identifier = null;
 
     /**
      *
@@ -124,9 +124,85 @@ abstract class Crud extends \Phalcon\Mvc\Controller
     {
         $this->filters = $this->filterData = $this->order = $this->callbacks = array();
 
-        $this->relation = $this->op = $this->p = $this->l = $this->id = $this->input = $this->primary = $this->itemWhere = $this->item = $this->extraCaption = $this->tableInBox = $this->tableInBoxTitle = null;
+        $this->relation = $this->operation = $this->page = $this->limit = $this->identifier = $this->input = $this->primary = $this->itemWhere = $this->item = $this->extraCaption = $this->tableInBox = $this->tableInBoxTitle = null;
 
         $this->searchFormEnabled = true;
+    }
+
+    private function _setRelation()
+    {
+        if (!$this->relation)
+        {
+            if(isset($get['r']) && is_object($get['r']))
+            {
+                $this->relation = $get['r'];
+            } else {
+                $this->relation = \Falconer\Helper\Core::coalesce(\Falconer\Helper\Core::filter($parameters, 'r'), \Falconer\Helper\Core::filter($get, 'r'));
+            }
+        }
+
+    }
+
+    private function _setOperation()
+    {
+        if (!$this->operation)
+        {
+            $this->operation = \Falconer\Helper\Core::filter($get, 'op');
+        }
+
+    }
+
+    private function _setDatastore($datastore_name)
+    {
+        $dependency_injector = \Phalcon\DI::getDefault();
+
+        if (!($datastore_name instanceof \Falconer\Base\Model))
+        {
+            $datastore = $this->datastore = new $datastore_name($dependency_injector);
+        } else
+        {
+            $datastore = $this->datastore = $datastore_name;
+        }
+
+        return $datastore;
+    }
+
+    private function _getDatastoreDefinition()
+    {
+        if (!$this->operation)
+        {
+            $this->operation = $datastore::OPERATION_DEFAULT;
+        }
+
+        $definition = $this->datastore->getDefinition($this->operation);
+
+        return $definition;
+    }
+
+    private function _setDependencyAttr($get, $post, $definition)
+    {
+        if (!$this->primary)
+        {
+            $this->primary = $primary = $definition->query(\Falconer\Definition::TYPE_COLUMN)->byKey('primary')->fetch(\Falconer\Definition::MODE_SINGLE);
+        }
+
+        if (!$this->identifier)
+        {
+            $this->identifier = \Falconer\Helper\Core::filter($get, $this->primary);
+        }
+
+        if (!$this->index)
+        {
+            $this->index = $this->relation;
+        }
+
+        if ($this->identifier)
+        {
+
+        } else {
+            $this->input = $post;
+        }
+
     }
 
     public function configureCrud($get, $post, $reset = true)
@@ -138,20 +214,9 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         $parameters = $this->urlParams;
 
-        if (!$this->relation)
-        {
-            if(isset($get['r']) && is_object($get['r']))
-            {
-                $this->relation = $get['r'];
-            } else {
-                $this->relation = \Falconer\Helper\Core::coalesce(\Falconer\Helper\Core::filter($parameters, 'r'), \Falconer\Helper\Core::filter($get, 'r'));
-            }
-        }
+        $this->_setRelation();
 
-        if (!$this->op)
-        {
-            $this->op = \Falconer\Helper\Core::filter($get, 'op');
-        }
+        $this->_setOperation();
 
         if (!$this->relation)
         {
@@ -160,48 +225,16 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         $datastore_name = $this->relation;
 
-        $dependency_injector = \Phalcon\DI::getDefault();
+        $datastore = $this->setDatastore($datastore_name);
 
-        if (!($datastore_name instanceof \Falconer\Base\Model))
-        {
-            $datastore = $this->datastore = new $datastore_name($dependency_injector);
-        } else
-        {
-            $datastore = $this->datastore = $datastore_name;
-        }
         if (!($this->datastore instanceof \Falconer\Base\Model))
         {
             throw new \Falconer\Exception\Base\IncorrectDatastoreInheritance;
         }
 
-        if (!$this->op)
-        {
-            $this->op = $datastore::OPERATION_DEFAULT;
-        }
+        $definition = $this->_getDatastoreDefinition();
 
-        $definition = $this->datastore->getDefinition($this->op);
-
-        if (!$this->primary)
-        {
-            $this->primary = $primary = $definition->query(\Falconer\Definition::TYPE_COLUMN)->byKey('primary')->fetch(\Falconer\Definition::MODE_SINGLE);
-        }
-
-        if (!$this->id)
-        {
-            $this->id = \Falconer\Helper\Core::filter($get, $this->primary);
-        }
-
-        if (!$this->index)
-        {
-            $this->index = $this->relation;
-        }
-
-        if ($this->id)
-        {
-
-        } else {
-            $this->input = $post;
-        }
+        $this->_setDependencyAttr($get, $post, $definition);
     }
 
     public function _read()
@@ -305,48 +338,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         if($request->isPost() === true)
         {
-            if($this->create_action instanceof Closure)
-            {
-                $this->create_action->__invoke();
-            }
-            else
-            {
-                $rules = $this->_getRulesFromDefition($definition);
-
-                if ($rules->invoke($this->input))
-                {
-                    if ($update)
-                    {
-                        list($sql, $msg) = $this->_updateData();
-                    } else
-                    {
-                        list($sql, $msg) = $this->_createData();
-                    }
-
-                    $transaction = $this->_getTransactionDatastore();
-                    try
-                    {
-                        $id = $this->datastore->hydrateResultOfExec($sql, $this->input);
-
-                        $transaction->commit();
-                        if ($this->flashEnabled)
-                        {
-                            $this->flash->success($msg);
-                        }
-                        if ($this->redirect)
-                        {
-                            return $this->response->redirect($this->redirectUpdate);
-                        }
-                        return (int) $id;
-                    } catch (\Phalcon\Mvc\Model\Transaction\Failed $exception){
-                        $transaction->rollback();
-                        $this->flash->error($exception->getMessage());
-                    }
-                } else {
-                    $messages = \Falconer\Rule\MessagePrinter::event($rules->getMessages(), C::$labels);
-                    $this->flash->error($messages);
-                }
-            }
+            $this->_processCreatePost($definition);
         }
 
 
@@ -361,6 +353,69 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         return $form->render($template);
     }
 
+    private function _processCreatePost($definition)
+    {
+        if($this->create_action instanceof Closure)
+        {
+            $this->create_action->__invoke();
+        }
+        else
+        {
+            $rules = $this->_getRulesFromDefition($definition);
+
+            if ($rules->invoke($this->input))
+            {
+                if ($update)
+                {
+                    list($sql, $msg) = $this->_updateData();
+                } else
+                {
+                    list($sql, $msg) = $this->_createData();
+                }
+
+                $identifier = $this->_saveCreate($sql);
+
+                $this->_flashRedirect($msg);
+
+                return $identifier;
+            } else {
+                $messages = \Falconer\Rule\MessagePrinter::event($rules->getMessages(), C::$labels);
+                $this->flash->error($messages);
+            }
+        }
+
+    }
+
+    private function _saveCreate($sql)
+    {
+        $transaction = $this->_getTransactionDatastore();
+        try
+        {
+            $identifier = $this->datastore->hydrateResultOfExec($sql, $this->input);
+
+            $transaction->commit();
+
+            return (int) $identifier;
+        } catch (\Phalcon\Mvc\Model\Transaction\Failed $exception){
+            $transaction->rollback();
+            $this->flash->error($exception->getMessage());
+        }
+
+    }
+
+    private function _flashRedirect($msg)
+    {
+        if ($this->flashEnabled)
+        {
+            $this->flash->success($msg);
+        }
+        if ($this->redirect)
+        {
+            return $this->response->redirect($this->redirectLink);
+        }
+
+    }
+
     public function _update()
     {
         return $this->_create(true);
@@ -373,35 +428,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         if($request->isPost() === true)
         {
-            if($this->delete_action instanceof Closure)
-            {
-                $this->delete_action->__invoke();
-            }
-            else
-            {
-                $primary = $this->primary;
-                if (!$this->itemWhere)
-                {
-                    throw new \Falconer\Exception\Crud\UnspecifiedItem;
-                }
-                $query = $this->datastore->createQuery($this->itemWhere);
-
-                $transaction = $this->_getTransactionDatastore();
-                try
-                {
-                    $this->datastore->hydrateResultOfExec($query, array($this->primary => $this->id));
-                    $this->handleUploads($this->id, null, 'delete');
-                    $transaction->commit();
-                    flash($this->msgDelete ? $this->msgDelete : 'O registro foi excluído.');
-
-                    return $this->response->redirect($this->redirectDelete);
-                } catch (Exception $exception)
-                {
-                    $transaction->rollBack();
-                    $this->flash->error($exception->getMessage());
-                }
-            }
-
+            $this->processDeletePost();
         }
 
         $def = array();
@@ -416,6 +443,44 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         $template = $this->_getTemplate();
 
         return $this->pageDescription . $form->render($template);
+    }
+
+    private function _processDeletePost()
+    {
+        if($this->delete_action instanceof Closure)
+        {
+            $this->delete_action->__invoke();
+        }
+        else
+        {
+            $primary = $this->primary;
+            if (!$this->itemWhere)
+            {
+                throw new \Falconer\Exception\Crud\UnspecifiedItem;
+            }
+
+            $this->_peformDelete();
+        }
+
+    }
+
+    private function _peformDelete()
+    {
+        $query = $this->datastore->createQuery($this->itemWhere);
+
+        $transaction = $this->_getTransactionDatastore();
+        try
+        {
+            $this->datastore->hydrateResultOfExec($query, array($this->primary => $this->identifier));
+            $transaction->commit();
+
+            $this->_flashRedirect($this->msgDelete);
+        } catch (Exception $exception)
+        {
+            $transaction->rollBack();
+            $this->flash->error($exception->getMessage());
+        }
+
     }
 
 }
