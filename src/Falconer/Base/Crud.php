@@ -116,7 +116,9 @@ abstract class Crud extends \Phalcon\Mvc\Controller
      *  @var closures
      */
 
-    public $create_save;
+    public $create_action;
+    public $delete_action;
+    public $read_action;
 
     public function resetCrud()
     {
@@ -158,11 +160,11 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         $datastore_name = $this->relation;
 
-        $di = \Phalcon\DI::getDefault();
+        $dependency_injector = \Phalcon\DI::getDefault();
 
         if (!($datastore_name instanceof \Falconer\Base\Model))
         {
-            $datastore = $this->datastore = new $datastore_name($di);
+            $datastore = $this->datastore = new $datastore_name($dependency_injector);
         } else
         {
             $datastore = $this->datastore = $datastore_name;
@@ -224,8 +226,8 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         return $legend;
     }
 
-    private function _setPageTitle() {
-        $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($this->relation . '_create');
+    private function _setPageTitle($op) {
+        $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($this->relation . $op);
     }
 
     private function _getRulesFromDefition($definition) {
@@ -239,7 +241,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
     {
         if (!$this->itemWhere)
         {
-            throw new \Falconer\Base\Crud\UnspecifiedItem;
+            throw new \Falconer\Exception\Crud\UnspecifiedItem;
         }
         $sql = $this->datastore->createQuery(array('cols' => $this->input, 'where' => $this->itemWhere));
         $msg = $this->msgUpdate ? $this->msgUpdate : 'O registro foi atualizado.';
@@ -297,54 +299,56 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         $legend = $this->_setFormLegend($update);
 
-        $this->_setPageTitle();
+        $this->_setPageTitle('_create');
 
         $definition = $this->datastore->getDefinition();
 
-        if($this->create_save instanceof Closure)
+        if($request->isPost() === true)
         {
-            $this->create_save->__invoke();
-        }
-        else if ($request->isPost() === true)
-        {
-            $rules = $this->_getRulesFromDefition($definition);
-
-            if ($rules->invoke($this->input))
+            if($this->create_action instanceof Closure)
             {
-                if ($update)
-                {
-                    list($sql, $msg) = $this->_updateData();
-                } else
-                {
-                    list($sql, $msg) = $this->_createData();
-                }
-
-                $transaction = $this->_getTransactionDatastore();
-                try
-                {
-                    $id = $this->datastore->hydrateResultOfExec($sql, $this->input);
-
-                    $transaction->commit();
-                    if ($this->flashEnabled)
-                    {
-                        $this->flash->success($msg);
-                    }
-                    if ($this->redirect)
-                    {
-                        return $this->response->redirect($this->redirectUpdate);
-                    }
-                    return (int) $id;
-                } catch (\Phalcon\Mvc\Model\Transaction\Failed $exception)
-                {
-                    $this->flash->error($exception->getMessage());
-                    $transaction->rollback();
-                }
-            } else
+                $this->create_action->__invoke();
+            }
+            else if ($request->isPost() === true)
             {
-                $messages = \Falconer\Rule\MessagePrinter::event($rules->getMessages(), C::$labels);
-                $this->flash->error($messages);
+                $rules = $this->_getRulesFromDefition($definition);
+
+                if ($rules->invoke($this->input))
+                {
+                    if ($update)
+                    {
+                        list($sql, $msg) = $this->_updateData();
+                    } else
+                    {
+                        list($sql, $msg) = $this->_createData();
+                    }
+
+                    $transaction = $this->_getTransactionDatastore();
+                    try
+                    {
+                        $id = $this->datastore->hydrateResultOfExec($sql, $this->input);
+
+                        $transaction->commit();
+                        if ($this->flashEnabled)
+                        {
+                            $this->flash->success($msg);
+                        }
+                        if ($this->redirect)
+                        {
+                            return $this->response->redirect($this->redirectUpdate);
+                        }
+                        return (int) $id;
+                    } catch (\Phalcon\Mvc\Model\Transaction\Failed $exception){
+                        $transaction->rollback();
+                        $this->flash->error($exception->getMessage());
+                    }
+                } else {
+                    $messages = \Falconer\Rule\MessagePrinter::event($rules->getMessages(), C::$labels);
+                    $this->flash->error($messages);
+                }
             }
         }
+
 
         $def = $this->_getFieldsFromDefinition($definition);
 
@@ -364,7 +368,54 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
     public function _delete()
     {
+        $request = new \Phalcon\Http\Request();
+        $this->_setPageTitle('_delete');
 
+        if($request->isPost() === true)
+        {
+            if($this->delete_action instanceof Closure)
+            {
+                $this->delete_action->__invoke();
+            }
+            else
+            {
+                $primary = $this->primary;
+                if (!$this->itemWhere)
+                {
+                    throw new \Falconer\Exception\Crud\UnspecifiedItem;
+                }
+                $query = $this->datastore->createQuery($this->itemWhere);
+
+                $transaction = $this->_getTransactionDatastore();
+                try
+                {
+                    $this->datastore->hydrateResultOfExec($query, array($this->primary => $this->id));
+                    $this->handleUploads($this->id, null, 'delete');
+                    $transaction->commit();
+                    flash($this->msgDelete ? $this->msgDelete : 'O registro foi excluído.');
+
+                    return $this->response->redirect($this->redirectDelete);
+                } catch (Exception $exception)
+                {
+                    $transaction->rollBack();
+                    $this->flash->error($exception->getMessage());
+                }
+            }
+
+        }
+
+        $def = array();
+
+        $options = array(
+            '_delete' => true,
+            'submit_text' => $this->submit_text,
+        );
+
+        $form = new $this->formClass($def, $options, $this->input);
+
+        $template = $this->_getTemplate();
+
+        return $this->pageDescription . $form->render($template);
     }
 
 }
