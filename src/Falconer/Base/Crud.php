@@ -309,7 +309,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
             {
                 $this->create_action->__invoke();
             }
-            else if ($request->isPost() === true)
+            else
             {
                 $rules = $this->_getRulesFromDefition($definition);
 
