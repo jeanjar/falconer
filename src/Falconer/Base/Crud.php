@@ -124,7 +124,9 @@ abstract class Crud extends \Phalcon\Mvc\Controller
     {
         $this->filters = $this->filterData = $this->order = $this->callbacks = array();
 
-        $this->relation = $this->operation = $this->page = $this->limit = $this->identifier = $this->input = $this->primary = $this->itemWhere = $this->item = $this->extraCaption = $this->tableInBox = $this->tableInBoxTitle = null;
+        $this->relation = $this->operation = $this->page = $this->limit =
+        $this->identifier = $this->input = $this->primary = $this->itemWhere =
+        $this->item = $this->extraCaption = $this->tableInBox = $this->tableInBoxTitle = null;
 
         $this->searchFormEnabled = true;
     }
@@ -139,15 +141,6 @@ abstract class Crud extends \Phalcon\Mvc\Controller
             } else {
                 $this->relation = \Falconer\Helper\Core::coalesce(\Falconer\Helper\Core::filter($parameters, 'r'), \Falconer\Helper\Core::filter($get, 'r'));
             }
-        }
-
-    }
-
-    private function _setOperation()
-    {
-        if (!$this->operation)
-        {
-            $this->operation = \Falconer\Helper\Core::filter($get, 'op');
         }
 
     }
@@ -216,7 +209,10 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         $this->_setRelation();
 
-        $this->_setOperation();
+        if (!$this->operation)
+        {
+            $this->operation = \Falconer\Helper\Core::filter($get, 'op');
+        }
 
         if (!$this->relation)
         {
@@ -270,24 +266,6 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         return $definition;
     }
 
-    private function _updateData()
-    {
-        if (!$this->itemWhere)
-        {
-            throw new \Falconer\Exception\Crud\UnspecifiedItem;
-        }
-        $sql = $this->datastore->createQuery(array('cols' => $this->input, 'where' => $this->itemWhere));
-        $msg = $this->msgUpdate ? $this->msgUpdate : 'O registro foi atualizado.';
-        return [$sql, $msg];
-    }
-
-    private function _createData()
-    {
-        $sql = $this->datastore->createQuery($this->input);
-        $msg = $this->msgCreate ? $this->msgCreate : 'O registro foi criado.';
-        return [$sql, $msg];
-    }
-
     private function _getTransactionDatastore()
     {
         $transactionManager = new TransactionManager();
@@ -295,22 +273,6 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         $this->datastore->setTransaction($transaction);
 
         return $transaction;
-    }
-
-    private function _getFieldsFromDefinition($definition)
-    {
-        return $def = $definition->query(\Falconer\Definition::TYPE_WIDGET)->fetch();
-    }
-
-    private function _getFormOptions($legend)
-    {
-        $options = array('controller' => $this, 'legend' => $legend);
-        if ($this->options)
-        {
-            $options = array_merge($options, $this->options);
-        }
-
-        return $options;
     }
 
     private function _getTemplate()
@@ -341,10 +303,13 @@ abstract class Crud extends \Phalcon\Mvc\Controller
             $this->_processCreatePost($definition);
         }
 
+        $def = $definition->query(\Falconer\Definition::TYPE_WIDGET)->fetch();
 
-        $def = $this->_getFieldsFromDefinition($definition);
-
-        $options = $this->_getFormOptions($legend);
+        $options = array('controller' => $this, 'legend' => $legend);
+        if ($this->options)
+        {
+            $options = array_merge($options, $this->options);
+        }
 
         $form = new $this->formClass($def, $options, $this->input);
 
@@ -367,10 +332,17 @@ abstract class Crud extends \Phalcon\Mvc\Controller
             {
                 if ($update)
                 {
-                    list($sql, $msg) = $this->_updateData();
-                } else
-                {
-                    list($sql, $msg) = $this->_createData();
+                    if (!$this->itemWhere)
+                    {
+                        throw new \Falconer\Exception\Crud\UnspecifiedItem;
+                    }
+                    $sql = $this->datastore->createQuery(array('cols' => $this->input, 'where' => $this->itemWhere));
+                    $msg = $this->msgUpdate ? $this->msgUpdate : 'O registro foi atualizado.';
+                    return [$sql, $msg];
+                } else {
+                    $sql = $this->datastore->createQuery($this->input);
+                    $msg = $this->msgCreate ? $this->msgCreate : 'O registro foi criado.';
+                    return [$sql, $msg];
                 }
 
                 $identifier = $this->_saveCreate($sql);
