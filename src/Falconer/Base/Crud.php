@@ -207,24 +207,97 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
     }
 
-    public function _create($update = false)
-    {
-        $request = new \Phalcon\Http\Request();
+    private function _setFormLegend($update) {
+        if ($update)
+        {
+            $legend = \Falconer\Helper\I18n::translate('Editar item');
+        } else
+        {
+            $legend = \Falconer\Helper\I18n::translate('Novo item');
+        }
 
         if ($this->formLegend)
         {
             $legend = $this->formLegend;
+        }
+
+        return $legend;
+    }
+
+    private function _setPageTitle() {
+        $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($this->relation . '_create');
+    }
+
+    private function _getRulesFromDefition($definition) {
+        $ruleQueryResult = $definition->query(Cdc_Definition::TYPE_RULE)->fetch();
+        $rules = new \Falconer\Rule($ruleQueryResult);
+
+        return $definition;
+    }
+
+    private function _updateData()
+    {
+        if (!$this->itemWhere)
+        {
+            throw new \Falconer\Base\Crud\UnspecifiedItem;
+        }
+        $sql = $this->datastore->createQuery(array('cols' => $this->input, 'where' => $this->itemWhere));
+        $msg = $this->msgUpdate ? $this->msgUpdate : 'O registro foi atualizado.';
+        return [$sql, $msg];
+    }
+
+    private function _createData()
+    {
+        $sql = $this->datastore->createQuery($this->input);
+        $msg = $this->msgCreate ? $this->msgCreate : 'O registro foi criado.';
+        return [$sql, $msg];
+    }
+
+    private function _getTransactionDatastore()
+    {
+        $transactionManager = new TransactionManager();
+        $transaction = $transactionManager->get();
+        $this->datastore->setTransaction($transaction);
+
+        return $transaction;
+    }
+
+    private function _getFieldsFromDefinition($definition)
+    {
+        return $def = $definition->query(\Falconer\Definition::TYPE_WIDGET)->fetch();
+    }
+
+    private function _getFormOptions($legend)
+    {
+        $options = array('controller' => $this, 'legend' => $legend);
+        if ($this->options)
+        {
+            $options = array_merge($options, $this->options);
+        }
+
+        return $options;
+    }
+
+    private function _getTemplate()
+    {
+        if ($this->formTemplate)
+        {
+            $template = $this->getTemplate($this->formTemplate);
         } else
         {
-            if ($update)
-            {
-                $legend = \Falconer\Helper\I18n::translate('Editar item');
-            } else
-            {
-                $legend = \Falconer\Helper\I18n::translate('Novo item');
-            }
+            $template = null;
         }
-        $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($this->relation . '_create');
+
+        return $template;
+    }
+
+    public function _create($update = false)
+    {
+        $request = new \Phalcon\Http\Request();
+
+        $legend = $this->_setFormLegend($update);
+
+        $this->_setPageTitle();
 
         $definition = $this->datastore->getDefinition();
 
@@ -232,29 +305,21 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         {
             $this->create_save->__invoke();
         }
-        else if ($request->isPost() == true)
+        else if ($request->isPost() === true)
         {
-            $ruleQueryResult = $definition->query(Cdc_Definition::TYPE_RULE)->fetch();
-            $rules = new \Falconer\Rule($ruleQueryResult);
+            $rules = $this->_getRulesFromDefition($definition);
+
             if ($rules->invoke($this->input))
             {
                 if ($update)
                 {
-                    if (!$this->itemWhere)
-                    {
-                        throw new \Falconer\Base\Crud\UnspecifiedItem;
-                    }
-                    $sql = $this->datastore->createQuery(array('cols' => $this->input, 'where' => $this->itemWhere));
-                    $msg = $this->msgUpdate ? $this->msgUpdate : 'O registro foi atualizado.';
+                    list($sql, $msg) = $this->_updateData();
                 } else
                 {
-                    $sql = $this->datastore->createQuery($this->input);
-                    $msg = $this->msgCreate ? $this->msgCreate : 'O registro foi criado.';
+                    list($sql, $msg) = $this->_createData();
                 }
 
-                $transactionManager = new TransactionManager();
-                $transaction = $transactionManager->get();
-                $this->datastore->setTransaction($transaction);
+                $transaction = $this->_getTransactionDatastore();
                 try
                 {
                     $id = $this->datastore->hydrateResultOfExec($sql, $this->input);
@@ -266,14 +331,12 @@ abstract class Crud extends \Phalcon\Mvc\Controller
                     }
                     if ($this->redirect)
                     {
-                        $this->redirectUpdate or $this->redirectUpdate = $this->link('admin', array('r' => $this->relation), array('op' => 'update', $this->primary => $id));
-                        header('Location: ' . $this->redirectUpdate);
-                        die;
+                        return $this->response->redirect($this->redirectUpdate);
                     }
                     return (int) $id;
-                } catch (\Phalcon\Mvc\Model\Transaction\Failed $e)
+                } catch (\Phalcon\Mvc\Model\Transaction\Failed $exception)
                 {
-                    $this->flash->error($e->getMessage());
+                    $this->flash->error($exception->getMessage());
                     $transaction->rollback();
                 }
             } else
@@ -283,24 +346,14 @@ abstract class Crud extends \Phalcon\Mvc\Controller
             }
         }
 
-        $def = $definition->query(\Falconer\Definition::TYPE_WIDGET)->fetch();
-        if ($this->options)
-        {
-            $options = array_merge(array('controller' => $this, 'legend' => $legend), $this->options);
-            $form = new $this->formClass($def, $options, $this->input);
-        } else
-        {
+        $def = $this->_getFieldsFromDefinition($definition);
 
-            $form = new $this->formClass($def, array('controller' => $this, 'legend' => $legend), $this->input);
-        }
+        $options = $this->_getFormOptions($legend);
 
-        if ($this->formTemplate)
-        {
-            $template = $this->getTemplate($this->formTemplate);
-        } else
-        {
-            $template = null;
-        }
+        $form = new $this->formClass($def, $options, $this->input);
+
+        $template = $this->_getTemplate();
+
         return $form->render($template);
     }
 
