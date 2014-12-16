@@ -17,8 +17,9 @@ script: ZEND_DONT_UNLOAD_MODULES=1 $(phpenv which php) ./tests/Falconer/ci/phpun
 
 after_script:
   - $(phpenv which php) ./tests/Falconer/ci/phpunit.php --coverage-clover build/logs/clover.xml -c tests/Falconer/phpunit.xml
-  - CODECLIMATE_REPO_TOKEN=7f19265c4c7fee33becca97f8b50c7e0fc81871ed37137c47f79fd17b16842d9 ./vendor/bin/test-reporter 
-  
+  - CODECLIMATE_REPO_TOKEN=7f19265c4c7fee33becca97f8b50c7e0fc81871ed37137c47f79fd17b16842d9 ./vendor/bin/test-reporter --stdout > codeclimate.json 
+  - - curl -X POST -d @codeclimate.json -H 'Content-Type: application/json' -H 'User-Agent: Code Climate (PHP Test Reporter v0.1.1)' https://codeclimate.com/test_reports
+
 notifications:
   on_success: always
   on_failure: always
