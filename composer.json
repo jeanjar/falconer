@@ -3,7 +3,6 @@
     "type":         "library",
     "description":  "An simple layer in phalcon framework",
     "keywords":     ["mvc", "form", "model"],
-    "license":      "GNU/GPL",
     "authors":      [
         {
             "name":     "Stefan Yohansson da Silva Areeira Pinto",

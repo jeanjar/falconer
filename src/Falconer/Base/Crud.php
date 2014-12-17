@@ -400,7 +400,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         if($request->isPost() === true)
         {
-            $this->processDeletePost();
+            $this->_processDeletePost();
         }
 
         $def = array();
