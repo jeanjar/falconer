@@ -131,7 +131,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         $this->searchFormEnabled = true;
     }
 
-    private function _setRelation()
+    private function _setRelation($parameters, $get)
     {
         if (!$this->relation)
         {
@@ -207,7 +207,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         $parameters = $this->urlParams;
 
-        $this->_setRelation();
+        $this->_setRelation($parameters, $get);
 
         if (!$this->operation)
         {
@@ -221,7 +221,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
 
         $datastore_name = $this->relation;
 
-        $datastore = $this->setDatastore($datastore_name);
+        $datastore = $this->_setDatastore($datastore_name);
 
         if (!($this->datastore instanceof \Falconer\Base\Model))
         {
@@ -256,7 +256,13 @@ abstract class Crud extends \Phalcon\Mvc\Controller
     }
 
     private function _setPageTitle($op) {
-        $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($this->relation . $op);
+        $relation = $this->relation;
+        if ($relation instanceof \Falconer\Base\Model)
+        {
+            $relation = get_class($relation);
+        }
+
+        $this->pageTitle = $this->pageTitle or \Falconer\Helper\Core::label($relation . $op);
     }
 
     private function _getRulesFromDefition($definition) {
