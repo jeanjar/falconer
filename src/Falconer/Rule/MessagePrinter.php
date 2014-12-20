@@ -26,7 +26,7 @@ class MessagePrinter
         {
             foreach ($m as $message)
             {
-                $messages_html .= '<strong class="field-error" data-field="' . $key . '">' . $label_function($key, $labels) . ': </strong>' . $message, LOG_ERR;
+                $messages_html .= '<strong class="field-error" data-field="' . $key . '">' . $label_function($key, $labels) . ': </strong>' . $message;
             }
         }
 

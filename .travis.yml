@@ -12,6 +12,6 @@ before_script:
   - (cd cphalcon/ext; export CFLAGS="-g3 -O1 -fno-delete-null-pointer-checks -Wall"; phpize && ./configure --enable-phalcon && make -j4 && sudo make install && phpenv config-add ../unit-tests/ci/phalcon.ini)
   - travis_retry composer self-update
   - travis_retry composer install --prefer-source --no-interaction --dev
+  - (cd src ; find -type f -name "*.php" -exec php -l {} \;)
 
 script: ZEND_DONT_UNLOAD_MODULES=1 $(phpenv which php) ./tests/Falconer/ci/phpunit.php --debug -c tests/Falconer/phpunit.xml
-
