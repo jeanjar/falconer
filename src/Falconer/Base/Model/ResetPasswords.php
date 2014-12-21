@@ -22,7 +22,91 @@ class ResetPasswords extends Model
     public function getStruct()
     {
         return $this->struct = array(
-
+            'reset_passwords' => array(
+                'type' => \Falconer\Definition::TYPE_RELATION,
+                'statement_type' => \Falconer\Definition::STATEMENT_SELECT,
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'item' => array(),
+                    'create' => array(
+                        'statement_type' => \Falconer\Definition::STATEMENT_INSERT,
+                    ),
+                    'update' => array(
+                        'statement_type' => \Falconer\Definition::STATEMENT_UPDATE,
+                    ),
+                    'delete' => array(
+                        'statement_type' => \Falconer\Definition::STATEMENT_DELETE,
+                    ),
+                ),
+            ),
+            //
+            'id' => array(
+                'type' => \Falconer\Definition::TYPE_COLUMN,
+                'primary' => true,
+                'hide' => true,
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'item' => array(),
+                    'create' => array(),
+                    'update' => array(),
+                    'delete' => array(),
+                ),
+            ),
+            //
+            'user_id' => array(
+                'type' => \Falconer\Definition::TYPE_COLUMN,
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'item' => array(),
+                    'create' => array(),
+                    'update' => array(),
+                    'delete' => array(),
+                ),
+            ),
+            //
+            'verification_code' => array(
+                'type' => \Falconer\Definition::TYPE_COLUMN,
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'item' => array(),
+                    'create' => array(),
+                    'update' => array(),
+                    'delete' => array(),
+                ),
+            ),
+            //
+            'modified_at' => array(
+                'type' => \Falconer\Definition::TYPE_COLUMN,
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'item' => array(),
+                    'create' => array(),
+                    'update' => array(),
+                    'delete' => array(),
+                ),
+            ),
+            //
+            'created_at' => array(
+                'type' => \Falconer\Definition::TYPE_COLUMN,
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'item' => array(),
+                    'create' => array(),
+                    'update' => array(),
+                    'delete' => array(),
+                ),
+            ),
+            //
+            'reset' => array(
+                'type' => \Falconer\Definition::TYPE_COLUMN,
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'item' => array(),
+                    'create' => array(),
+                    'update' => array(),
+                    'delete' => array(),
+                ),
+            ),
         );
     }
 
