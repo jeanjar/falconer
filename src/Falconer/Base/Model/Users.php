@@ -1,6 +1,6 @@
 <?php
 
-namespace Falconer\Acl\Model;
+namespace Falconer\Base\Model;
 
 use Phalcon\Mvc\Model\Validator\InclusionIn,
 Phalcon\Mvc\Model\Validator\Uniqueness,
@@ -18,6 +18,10 @@ class Users extends \Falconer\Base\Model
         self::GENDER_FEMALE => 'Female'
     );
 
+    const WAITING_CONFIRMATION = 1;
+    const ACCEPT = 2;
+    const DENY = 3;
+
     public function getSource()
     {
         return "users";
@@ -28,10 +32,31 @@ class Users extends \Falconer\Base\Model
         $this->skipAttributesOnCreate(array('created_at'));
         $this->useDynamicUpdate(true);
 
-        $this->hasOne("group_id", "\Falconer\Acl\Model\Groups", "id", array('alias' => 'Groups'));
-        $this->hasMany("id", "\Falconer\Acl\Model\UsersResources", "user_id", array('alias' => 'Resources', 'foreignKey' => array(
-            'action' => Relation::ACTION_CASCADE
-        )));
+        $this->belongsTo('group_id', 'Vokuro\Models\Groups', 'id', array(
+            'alias' => 'groups',
+            'reusable' => true
+        ));
+
+        $this->hasMany('id', 'Falconer\Base\Models\SuccessLogins', 'user_id', array(
+            'alias' => 'successLogins',
+            'foreignKey' => array(
+                'message' => 'User cannot be deleted because he/she has activity in the system'
+            )
+        ));
+
+        $this->hasMany('id', 'Falconer\Base\Models\PasswordChanges', 'user_id', array(
+            'alias' => 'passwordChanges',
+            'foreignKey' => array(
+                'message' => 'User cannot be deleted because he/she has activity in the system'
+            )
+        ));
+
+        $this->hasMany('id', 'Falconer\Base\Models\ResetPasswords', 'user_id', array(
+            'alias' => 'resetPasswords',
+            'foreignKey' => array(
+                'message' => 'User cannot be deleted because he/she has activity in the system'
+            )
+        ));
     }
 
     public function getStruct() {
@@ -67,7 +92,22 @@ class Users extends \Falconer\Base\Model
                     'delete' => array(),
                 ),
             ),
+            //
             'nome' => array(
+                'type' => \Falconer\Definition::TYPE_COLUMN,
+                \Falconer\Definition::TYPE_WIDGET => array(
+                    'type' => 'text'
+                ),
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'item' => array(),
+                    'create' => array(),
+                    'update' => array(),
+                    'delete' => array(),
+                ),
+            ),
+            //
+            'email' => array(
                 'type' => \Falconer\Definition::TYPE_COLUMN,
                 \Falconer\Definition::TYPE_WIDGET => array(
                     'type' => 'text'
@@ -121,5 +161,6 @@ class Users extends \Falconer\Base\Model
         }
 
     }
+
 
 }

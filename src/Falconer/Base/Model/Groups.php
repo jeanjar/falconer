@@ -1,6 +1,6 @@
 <?php
 
-namespace Falconer\Acl\Model;
+namespace Falconer\Base\Model;
 
 use Phalcon\Mvc\Model\Validator\Uniqueness;
 
@@ -9,29 +9,36 @@ class Groups extends \Falconer\Base\Model
     public $id;
     public $name;
     public $active;
-    
+
     public function getSource()
     {
         return "groups";
     }
-    
+
     public function initialize()
     {
         $this->useDynamicUpdate(true);
 
-        $this->hasOne("group_id", "\Falconer\Acl\Model\Groups", "id", array('alias' => 'Groups'));
-        $this->hasMany("resource_id", "\Falconer\Acl\Model\Resources", "resource_id", array('alias' => 'Resources'));
+        $this->hasMany('id', 'Falconer\Base\Models\Users', 'group_id', array(
+            'alias' => 'users',
+            'foreignKey' => array(
+                'message' => 'Group cannot be deleted because it\'s used on Users'
+            )
+        ));
+        $this->hasMany("id", "Falconer\Base\Model\Resources", "group_id", array('alias' => 'resources'));
     }
-    
+
     public function getStruct() {
-        ;
+        return $this->struct = array(
+            
+        );
     }
-    
+
     public function getResources($params=null)
     {
         return $this->getRelated('Resources', $params);
     }
-    
+
     public function validation()
     {
         $this->validate(new Uniqueness(
@@ -40,12 +47,12 @@ class Groups extends \Falconer\Base\Model
                 'message' => 'The name must be unique'
             )
         ));
-        
+
         if(is_null($this->active))
         {
             $this->active = true;
         }
-        
+
         if ($this->validationHasFailed() == true) {
             return false;
         }

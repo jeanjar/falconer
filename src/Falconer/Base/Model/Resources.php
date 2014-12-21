@@ -1,6 +1,6 @@
 <?php
 
-namespace Falconer\Acl\Model;
+namespace Falconer\Base\Model;
 
 use Phalcon\Mvc\Model\Validator\Uniqueness;
 
@@ -10,12 +10,12 @@ class Resources extends \Falconer\Base\Model
     {
         return "resources";
     }
-    
+
     public function initialize()
     {
-        $this->hasMany("id", "\Falconer\Acl\Model\UsersResources", "resource_id", array('alias' => 'Resources'));
+        $this->hasMany("id", "Falconer\Base\Model\UsersResources", "resource_id", array('alias' => 'Resources'));
     }
-    
+
     public function validation()
     {
         $this->validate(new Uniqueness(
@@ -24,12 +24,12 @@ class Resources extends \Falconer\Base\Model
                 'message' => 'The resource must be unique'
             )
         ));
-        
+
         if ($this->validationHasFailed() == true) {
             return false;
         }
     }
-    
+
     public function getStruct() {
         ;
     }

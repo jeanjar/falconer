@@ -8,8 +8,11 @@ create table users (
     password_change_key_evalution timestamp without time zone,
     email character varying not null unique,
     gender character varying(1) not null,
-    active boolean default true,
+    active bigint default 1,
+    banned boolean default false,
+    suspended boolean default false,
     created_at timestamp without time zone default now(),
+    mustChangePassword boolean default false,
     hybridauth_provider_name character varying,
     hybridauth_provider_uid character varying
 );

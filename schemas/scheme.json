@@ -1,7 +1,5 @@
 {
     "create-group": "group/create-table.sql",
     "create-user": "user/create-table.sql",
-    "create-resource": "resource/create-table.sql",
-    "create-user_resource": "user_resource/create-table.sql",
-    "create-group_resource": "group_resource/create-table.sql"
+    "create-resource": "resource/create-table.sql"
 }
