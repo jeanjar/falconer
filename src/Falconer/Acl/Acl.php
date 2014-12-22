@@ -39,7 +39,7 @@ abstract class Acl extends Component implements AclInterface
     */
     protected $actionDescriptions = array();
 
-    public function __construct($resources, $actions, $cacheFilePath = null)
+    public function __construct($resources = null, $actions = null, $cacheFilePath = null)
     {
         $this->setPrivateResources($resources);
         $this->setActionDescriptions($actions);
