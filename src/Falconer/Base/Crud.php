@@ -269,7 +269,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
         $ruleQueryResult = $definition->query(Cdc_Definition::TYPE_RULE)->fetch();
         $rules = new \Falconer\Rule($ruleQueryResult);
 
-        return $definition;
+        return $rules;
     }
 
     private function _getTransactionDatastore()
