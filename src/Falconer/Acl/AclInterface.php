@@ -2,6 +2,8 @@
 
 namespace Falconer\Acl;
 
+use Falconer\Base\Model\Groups;
+
 interface AclInterface
 {
     public function isPrivate($controllerName);
@@ -10,7 +12,7 @@ interface AclInterface
 
     public function getAcl();
 
-    public function getPermissions($group);
+    public function getPermissions(Groups $group);
 
     public function getResources();
 
