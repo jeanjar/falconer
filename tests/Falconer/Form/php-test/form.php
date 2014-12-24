@@ -1,8 +1,8 @@
 <?php
 
-include '../../../vendor/autoload.php';
+include '../../../../vendor/autoload.php';
 
-$def = require_once('default_def.php');
+$def = require_once(__DIR__ . '/../default_def.php');
 
 $options = $input = [];
 

@@ -20,9 +20,12 @@
 		<testsuite name="Falconer">
 
 			<file>InitTest.php</file>
-            <file>form/FormTest.php</file>
-            <file>form/TableTest.php</file>
-
+            <file>Form/unit-test/FormTest.php</file>
+            <file>Form/unit-test/TableTest.php</file>
+            <file>Rule/unit-test/RuleAgeTest.php</file>
+            <file>Rule/unit-test/RuleArrayKeyExistsTest.php</file>
+            <file>Rule/unit-test/RuleAtLeastOneTest.php</file>
+            <file>Rule/unit-test/RuleBooleanTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

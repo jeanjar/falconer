@@ -66,6 +66,7 @@ class Users extends \Falconer\Base\Model
                 'statement_type' => \Falconer\Definition::STATEMENT_SELECT,
                 \Falconer\Definition::OPERATION => array(
                     'read' => array(),
+                    'login' => array(),
                     'item' => array(),
                     'create' => array(
                         'statement_type' => \Falconer\Definition::STATEMENT_INSERT,
@@ -86,6 +87,7 @@ class Users extends \Falconer\Base\Model
                 'hide' => true,
                 \Falconer\Definition::OPERATION => array(
                     'read' => array(),
+                    'login' => array(),
                     'item' => array(),
                     'create' => array(),
                     'update' => array(),
@@ -114,6 +116,22 @@ class Users extends \Falconer\Base\Model
                 ),
                 \Falconer\Definition::OPERATION => array(
                     'read' => array(),
+                    'login' => array(),
+                    'item' => array(),
+                    'create' => array(),
+                    'update' => array(),
+                    'delete' => array(),
+                ),
+            ),
+            //
+            'password' => array(
+                'type' => \Falconer\Definition::TYPE_COLUMN,
+                \Falconer\Definition::TYPE_WIDGET => array(
+                    'type' => 'password'
+                ),
+                \Falconer\Definition::OPERATION => array(
+                    'read' => array(),
+                    'login' => array(),
                     'item' => array(),
                     'create' => array(),
                     'update' => array(),

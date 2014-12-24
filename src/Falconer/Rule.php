@@ -42,16 +42,17 @@ class Rule
         $messages = array();
         foreach ($queryResult as $key => $value)
         {
-            if (!array_key_exists(Cdc_Definition::TYPE_RULE, $value))
+            if (!array_key_exists(\Falconer\Definition::TYPE_RULE, $value))
             {
                 continue;
             }
 
-            foreach ($value[Cdc_Definition::TYPE_RULE] as $c)
+            foreach ($value[\Falconer\Definition::TYPE_RULE] as $c)
             {
                 if (is_callable($c))
                 {
                     $class_name = get_class($c[0]);
+
                     if (!array_key_exists($class_name, $this->rules))
                     {
                         $class = $c[0];

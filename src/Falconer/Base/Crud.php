@@ -266,7 +266,7 @@ abstract class Crud extends \Phalcon\Mvc\Controller
     }
 
     private function _getRulesFromDefition($definition) {
-        $ruleQueryResult = $definition->query(Cdc_Definition::TYPE_RULE)->fetch();
+        $ruleQueryResult = $definition->query(\Falconer\Definition::TYPE_RULE)->fetch();
         $rules = new \Falconer\Rule($ruleQueryResult);
 
         return $rules;

@@ -5,7 +5,7 @@ class FormTest extends PHPUnit_Framework_TestCase
 
     private function _getDefinition()
     {
-        return require('default_def.php');
+        return require(__DIR__ . DIRECTORY_SEPARATOR . '../default_def.php');
     }
 
     public function testFormInstance()
