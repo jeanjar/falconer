@@ -5,7 +5,7 @@ class TableTest extends PHPUnit_Framework_TestCase
 
     private function _getDefinition()
     {
-        return require('default_table.php');
+        return require('../default_table.php');
     }
 
     public function testTableInstance()

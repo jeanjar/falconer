@@ -111,6 +111,8 @@ class Definition
     //
     const RELATION_HAS_AND_BELONGS_TO = 'has_belongs_to';
 
+    const DEFAULT_OPERATION = 'item';
+
     /**
      * Definição atual.
      *
@@ -138,7 +140,7 @@ class Definition
      * @param array $definition Estrutura de definição
      * @param type $operation Operação atual
      */
-    public function __construct(array $definition = array(), $operation = DEFAULT_OPERATION)
+    public function __construct(array $definition = array(), $operation = self::DEFAULT_OPERATION)
     {
         $this->setDefinition($definition);
         $this->setOperation($operation);
