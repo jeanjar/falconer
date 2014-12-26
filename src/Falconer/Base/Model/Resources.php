@@ -30,7 +30,8 @@ class Resources extends \Falconer\Base\Model
         }
     }
 
-    public function getStruct() {
-        ;
+    public function getStruct()
+    {
+
     }
 }

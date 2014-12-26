@@ -28,9 +28,10 @@ class Groups extends \Falconer\Base\Model
         $this->hasMany("id", "Falconer\Base\Model\Resources", "group_id", array('alias' => 'resources'));
     }
 
-    public function getStruct() {
+    public function getStruct()
+    {
         return $this->struct = array(
-            
+
         );
     }
 

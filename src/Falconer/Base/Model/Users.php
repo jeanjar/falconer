@@ -59,85 +59,13 @@ class Users extends \Falconer\Base\Model
         ));
     }
 
-    public function getStruct() {
+    public function getStruct()
+    {
         return $this->struct = array(
-            'users' => array(
-                'type' => \Falconer\Definition::TYPE_RELATION,
-                'statement_type' => \Falconer\Definition::STATEMENT_SELECT,
-                \Falconer\Definition::OPERATION => array(
-                    'read' => array(),
-                    'login' => array(),
-                    'item' => array(),
-                    'create' => array(
-                        'statement_type' => \Falconer\Definition::STATEMENT_INSERT,
-                    ),
-                    'update' => array(
-                        'statement_type' => \Falconer\Definition::STATEMENT_UPDATE,
-                    ),
-                    'delete' => array(
-                        'statement_type' => \Falconer\Definition::STATEMENT_DELETE,
-                    ),
-                ),
-            ),
-
-            //
-            'id' => array(
-                'type' => \Falconer\Definition::TYPE_COLUMN,
-                'primary' => true,
-                'hide' => true,
-                \Falconer\Definition::OPERATION => array(
-                    'read' => array(),
-                    'login' => array(),
-                    'item' => array(),
-                    'create' => array(),
-                    'update' => array(),
-                    'delete' => array(),
-                ),
-            ),
-            //
-            'nome' => array(
-                'type' => \Falconer\Definition::TYPE_COLUMN,
-                \Falconer\Definition::TYPE_WIDGET => array(
-                    'type' => 'text'
-                ),
-                \Falconer\Definition::OPERATION => array(
-                    'read' => array(),
-                    'item' => array(),
-                    'create' => array(),
-                    'update' => array(),
-                    'delete' => array(),
-                ),
-            ),
-            //
-            'email' => array(
-                'type' => \Falconer\Definition::TYPE_COLUMN,
-                \Falconer\Definition::TYPE_WIDGET => array(
-                    'type' => 'text'
-                ),
-                \Falconer\Definition::OPERATION => array(
-                    'read' => array(),
-                    'login' => array(),
-                    'item' => array(),
-                    'create' => array(),
-                    'update' => array(),
-                    'delete' => array(),
-                ),
-            ),
-            //
-            'password' => array(
-                'type' => \Falconer\Definition::TYPE_COLUMN,
-                \Falconer\Definition::TYPE_WIDGET => array(
-                    'type' => 'password'
-                ),
-                \Falconer\Definition::OPERATION => array(
-                    'read' => array(),
-                    'login' => array(),
-                    'item' => array(),
-                    'create' => array(),
-                    'update' => array(),
-                    'delete' => array(),
-                ),
-            ),
+            'users' => DefinitionHelperFactory::get('Relation'),
+            'id' => DefinitionHelperFactory::get('PrimaryColumn'),
+            'nome' => DefinitionHelperFactory::get('TextColumn'),
+            'email' => DefinitionHelperFactory::get('TextColumn'),
         );
     }
 
