@@ -65,7 +65,7 @@ class Users extends Model
         return $this->struct = array(
             'users' => DefinitionHelperFactory::get('Relation'),
             'id' => DefinitionHelperFactory::get('PrimaryColumn'),
-            'name' => DefinitionHelperFactory::get('TextColumn', []),
+            'name' => DefinitionHelperFactory::get('TextColumn'),
             'email' => DefinitionHelperFactory::get('TextColumn'),
             'password' => DefinitionHelperFactory::get('PasswordColumn'),
         );
