@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class RichColumn extends DefinitionHelper
 {
@@ -17,12 +17,12 @@ class RichColumn extends DefinitionHelper
         );
 
         $result = array(
-            'type' => Cdc_Definition::TYPE_COLUMN,
-            Cdc_Definition::TYPE_WIDGET => array(
+            'type' => \Falconer\Definition::TYPE_COLUMN,
+            \Falconer\Definition::TYPE_WIDGET => array(
                 'widget' => 'rich',
             ),
-            Cdc_Definition::OPERATION => $operations,
-            Cdc_Definition::TYPE_RULE => array(
+            \Falconer\Definition::OPERATION => $operations,
+            \Falconer\Definition::TYPE_RULE => array(
                 array('Cdc_Rule_Trim'),
             ),
         );

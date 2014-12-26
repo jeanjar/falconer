@@ -59,7 +59,7 @@ class ArrayKeyExists extends Ruler
         }
         else
         {
-            $options = \Falconer\Base\Form::obterOpcoes($definition[$index][Cdc_Definition::TYPE_WIDGET]);
+            $options = \Falconer\Base\Form::obterOpcoes($definition[$index][\Falconer\Definition::TYPE_WIDGET]);
         }
 
 

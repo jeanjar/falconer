@@ -9,21 +9,21 @@ class Relation extends DefinitionHelper
         self::checkRequiredArgs($args, []);
 
         extract($args);
-        
+
         return array(
-            'type' => Cdc_Definition::TYPE_RELATION,
-            'statement_type' => Cdc_Definition::STATEMENT_SELECT,
-            Cdc_Definition::OPERATION => array(
+            'type' => \Falconer\Definition::TYPE_RELATION,
+            'statement_type' => \Falconer\Definition::STATEMENT_SELECT,
+            \Falconer\Definition::OPERATION => array(
                 'read' => array(),
                 'item' => array(),
                 'create' => array(
-                    'statement_type' => Cdc_Definition::STATEMENT_INSERT,
+                    'statement_type' => \Falconer\Definition::STATEMENT_INSERT,
                 ),
                 'update' => array(
-                    'statement_type' => Cdc_Definition::STATEMENT_UPDATE,
+                    'statement_type' => \Falconer\Definition::STATEMENT_UPDATE,
                 ),
                 'delete' => array(
-                    'statement_type' => Cdc_Definition::STATEMENT_DELETE,
+                    'statement_type' => \Falconer\Definition::STATEMENT_DELETE,
                 ),
             ),
         );

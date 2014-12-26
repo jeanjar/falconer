@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class PlaceholderColumn extends DefinitionHelper
 {
@@ -9,15 +9,15 @@ class PlaceholderColumn extends DefinitionHelper
         self::checkRequiredArgs($args, []);
 
         extract($args);
-        
+
         $operations or $operations = array(
             'create' => array(),
         );
 
         return array(
-            'type' => Cdc_Definition::TYPE_COLUMN,
+            'type' => \Falconer\Definition::TYPE_COLUMN,
             'hide' => true,
-            Cdc_Definition::OPERATION => $operations,
+            \Falconer\Definition::OPERATION => $operations,
         );
     }
 }

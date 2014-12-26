@@ -26,6 +26,12 @@
             <file>Rule/unit-test/RuleArrayKeyExistsTest.php</file>
             <file>Rule/unit-test/RuleAtLeastOneTest.php</file>
             <file>Rule/unit-test/RuleBooleanTest.php</file>
+            <file>Model/unit-test/EmailConfirmationsTest.php</file>
+            <file>Model/unit-test/FailedLoginsTest.php</file>
+            <file>Model/unit-test/PasswordChangesTest.php</file>
+            <file>Model/unit-test/RememberTokensTest.php</file>
+            <file>Model/unit-test/ResetPasswordsTest.php</file>
+            <file>Model/unit-test/SuccessLoginsTest.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

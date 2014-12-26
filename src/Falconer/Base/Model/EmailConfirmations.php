@@ -2,8 +2,8 @@
 
 namespace Falconer\Base\Model;
 
-use Phalcon\Mvc\Model;
-
+use Falconer\Base\Model;
+use Falconer\Helper\Definition\DefinitionHelperFactory;
 /**
 * EmailConfirmations
 * Stores the reset password codes and their evolution

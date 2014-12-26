@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class PrimaryColumn extends DefinitionHelper
 {
@@ -9,7 +9,7 @@ class PrimaryColumn extends DefinitionHelper
         self::checkRequiredArgs($args, []);
 
         extract($args);
-        
+
         $operations or $operations = array(
             'read' => array(),
             'item' => array(),
@@ -19,10 +19,10 @@ class PrimaryColumn extends DefinitionHelper
         );
 
         return array(
-            'type' => Cdc_Definition::TYPE_COLUMN,
+            'type' => \Falconer\Definition::TYPE_COLUMN,
             'primary' => true,
             'hide' => true,
-            Cdc_Definition::OPERATION => $operations,
+            \Falconer\Definition::OPERATION => $operations,
         );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class DateTimeColumn extends DefinitionHelper
 {
@@ -12,7 +12,7 @@ class DateTimeColumn extends DefinitionHelper
 
         $operations or $operations = array(
             'read' => array(
-                Cdc_Definition::FORMATTER => array(
+                \Falconer\Definition::FORMATTER => array(
                     array('Cdc_CellDataFormatter', 'formatDate'), array('d-m-Y H:i:s'),
                 ),
             ),
@@ -22,16 +22,16 @@ class DateTimeColumn extends DefinitionHelper
         );
 
         $result = array(
-            'type' => Cdc_Definition::TYPE_COLUMN,
-            Cdc_Definition::TYPE_WIDGET => array(
+            'type' => \Falconer\Definition::TYPE_COLUMN,
+            \Falconer\Definition::TYPE_WIDGET => array(
                 'widget' => 'datetime',
                 'output_callback' => array(array('Cdc_OutputFormatter', 'date'), array('d/m/Y H:i:s')),
                 'attributes' => array(
                     'class' => 'span3',
                 ),
             ),
-            Cdc_Definition::OPERATION => $operations,
-            Cdc_Definition::TYPE_RULE => array(
+            \Falconer\Definition::OPERATION => $operations,
+            \Falconer\Definition::TYPE_RULE => array(
                 array('Cdc_Rule_Trim'),
                 // array('Cdc_Rule_Date', array('Y-m-d')),
             ),

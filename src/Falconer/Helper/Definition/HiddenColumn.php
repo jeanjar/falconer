@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class HiddenColumn extends DefinitionHelper
 {
@@ -10,8 +10,8 @@ class HiddenColumn extends DefinitionHelper
 
         extract($args);
 
-        $col = self::textColumn($classes_str, $rules, $maxLength, $minLength, $operations);
-        $col[Cdc_Definition::TYPE_WIDGET]['widget'] = 'hidden';
+        $col = TextColumn::getStruct($args);
+        $col[\Falconer\Definition::TYPE_WIDGET]['widget'] = 'hidden';
         return $col;
     }
 }

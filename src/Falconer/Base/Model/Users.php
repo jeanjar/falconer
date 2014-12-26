@@ -5,9 +5,10 @@ namespace Falconer\Base\Model;
 use Phalcon\Mvc\Model\Validator\InclusionIn,
 Phalcon\Mvc\Model\Validator\Uniqueness,
 Phalcon\Mvc\Model\Relation;
+use Falconer\Helper\Definition\DefinitionHelperFactory;
+use Falconer\Base\Model;
 
-
-class Users extends \Falconer\Base\Model
+class Users extends Model
 {
 
     const GENDER_MALE = 1;

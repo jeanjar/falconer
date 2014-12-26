@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class TextColumn extends DefinitionHelper
 {
@@ -10,6 +10,16 @@ class TextColumn extends DefinitionHelper
 
         extract($args);
 
+        if(!isset($minLength))
+        {
+            $minLength = 0;
+        }
+
+        if(!isset($maxLength))
+        {
+            $maxLength = 150;
+        }
+
         $operations or $operations = array(
             'read' => array(),
             'item' => array(),
@@ -18,27 +28,27 @@ class TextColumn extends DefinitionHelper
         );
 
         $result = array(
-            'type' => Cdc_Definition::TYPE_COLUMN,
-            Cdc_Definition::TYPE_WIDGET => array(
+            'type' => \Falconer\Definition::TYPE_COLUMN,
+            \Falconer\Definition::TYPE_WIDGET => array(
                 'attributes' => array(
                     'maxlength' => $maxLength,
                 ),
             ),
-            Cdc_Definition::OPERATION => $operations,
-            Cdc_Definition::TYPE_RULE => array(
+            \Falconer\Definition::OPERATION => $operations,
+            \Falconer\Definition::TYPE_RULE => array(
                 array('Cdc_Rule_Trim'),
                 array('Cdc_Rule_Length', array($minLength, $maxLength)),
             ),
         );
 
-        if ($classes_str)
+        if (isset($classes_str))
         {
-            $result[Cdc_Definition::TYPE_WIDGET]['attributes']['class'] = $classes_str;
+            $result[\Falconer\Definition::TYPE_WIDGET]['attributes']['class'] = $classes_str;
         }
 
-        if ($rules)
+        if (isset($rules))
         {
-            $result[Cdc_Definition::TYPE_RULE] = array_merge($result[Cdc_Definition::TYPE_RULE], $rules);
+            $result[\Falconer\Definition::TYPE_RULE] = array_merge($result[\Falconer\Definition::TYPE_RULE], $rules);
         }
 
         return $result;

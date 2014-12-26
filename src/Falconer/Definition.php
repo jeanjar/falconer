@@ -196,7 +196,7 @@ class Definition
     /**
      * Inicia uma consulta à definição.
      *
-     * @return Cdc_Definition
+     * @return \Falconer\Definition
      *
      * O tipo é obrigatório para normalizar as definições e simplificar o processamento.
      *
@@ -242,7 +242,7 @@ class Definition
      * Especifica uma chave para ser utilizada na consulta.
      *
      * @param string $term Chave para a consulta.
-     * @return Cdc_Definition
+     * @return \Falconer\Definition
      */
     public function byKey($term)
     {
@@ -273,7 +273,7 @@ class Definition
      * O resultado incluirá todos os elementos que não possuem esta chave.
      *
      * @param string $term Chave com filtro de exclusão para a consulta.
-     * @return Cdc_Definition
+     * @return \Falconer\Definition
      */
     public function byKeyRemoval($term)
     {

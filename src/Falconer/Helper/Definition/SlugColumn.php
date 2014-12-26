@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class SlugColumn extends DefinitionHelper
 {
@@ -15,8 +15,8 @@ class SlugColumn extends DefinitionHelper
         );
 
         $result = array(
-            'type' => Cdc_Definition::TYPE_COLUMN,
-            Cdc_Definition::OPERATION => $operations,
+            'type' => \Falconer\Definition::TYPE_COLUMN,
+            \Falconer\Definition::OPERATION => $operations,
         );
 
         return $result;

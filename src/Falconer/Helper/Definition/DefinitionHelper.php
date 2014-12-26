@@ -10,7 +10,7 @@ abstract class DefinitionHelper implements DefinitionHelperInterface
 
         if(count($diff))
         {
-            thrown \Exception('Missing args: ' . implode(',', array_flip($diff)));
+            throw new \Falconer\Exception\DefinitionHelper\MissingArgs('These args are required: ' . implode(', ', array_flip($diff)));
         }
 
     }

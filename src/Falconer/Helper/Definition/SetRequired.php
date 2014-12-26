@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class SetRequired extends DefinitionHelper
 {
@@ -12,10 +12,10 @@ class SetRequired extends DefinitionHelper
 
         if ($htmlAttribute)
         {
-            $column[Cdc_Definition::TYPE_WIDGET]['attributes']['required'] = 'required';
+            $column[\Falconer\Definition::TYPE_WIDGET]['attributes']['required'] = 'required';
         }
 
-        $column[Cdc_Definition::TYPE_RULE][] = array('Cdc_Rule_Required');
+        $column[\Falconer\Definition::TYPE_RULE][] = array('Cdc_Rule_Required');
 
         return $column;
     }

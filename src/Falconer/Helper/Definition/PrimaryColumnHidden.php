@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class PrimaryColumnHidden extends DefinitionHelper
 {
@@ -9,7 +9,7 @@ class PrimaryColumnHidden extends DefinitionHelper
         self::checkRequiredArgs($args, []);
 
         extract($args);
-        
+
         $operations or $operations = array(
             'read' => array(),
             'item' => array(),
@@ -19,16 +19,16 @@ class PrimaryColumnHidden extends DefinitionHelper
         );
 
         return array(
-            'type' => Cdc_Definition::TYPE_COLUMN,
+            'type' => \Falconer\Definition::TYPE_COLUMN,
             'primary' => true,
-            Cdc_Definition::OPERATION => $operations,
-            Cdc_Definition::TYPE_WIDGET => array(
+            \Falconer\Definition::OPERATION => $operations,
+            \Falconer\Definition::TYPE_WIDGET => array(
                 'widget' => 'hidden',
                 'attributes' => array(
                     'class' => 'id',
                 ),
             ),
-            Cdc_Definition::TYPE_RULE => array(
+            \Falconer\Definition::TYPE_RULE => array(
                 array('Cdc_Rule_Trim'),
             ),
         );

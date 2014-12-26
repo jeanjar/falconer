@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class SimpleSelectColumn extends DefinitionHelper
 {
@@ -17,12 +17,12 @@ class SimpleSelectColumn extends DefinitionHelper
         );
 
         $result = array(
-            'type' => Cdc_Definition::TYPE_COLUMN,
-            Cdc_Definition::TYPE_WIDGET => array(
+            'type' => \Falconer\Definition::TYPE_COLUMN,
+            \Falconer\Definition::TYPE_WIDGET => array(
                 'widget' => 'select',
             ),
-            Cdc_Definition::OPERATION => $operations,
-            Cdc_Definition::TYPE_RULE => array(
+            \Falconer\Definition::OPERATION => $operations,
+            \Falconer\Definition::TYPE_RULE => array(
                 array('Cdc_Rule_Trim'),
                 array('Cdc_Rule_ArrayKeyExists'),
             ),
@@ -32,16 +32,16 @@ class SimpleSelectColumn extends DefinitionHelper
 
         if (is_callable($first))
         {
-            $result[Cdc_Definition::TYPE_WIDGET]['callback'] = $values;
+            $result[\Falconer\Definition::TYPE_WIDGET]['callback'] = $values;
         }
         else
         {
-            $result[Cdc_Definition::TYPE_WIDGET]['options'] = $values;
+            $result[\Falconer\Definition::TYPE_WIDGET]['options'] = $values;
         }
 
         if ($classes_str)
         {
-            $result[Cdc_Definition::TYPE_WIDGET]['attributes']['class'] = $classes_str;
+            $result[\Falconer\Definition::TYPE_WIDGET]['attributes']['class'] = $classes_str;
         }
 
 

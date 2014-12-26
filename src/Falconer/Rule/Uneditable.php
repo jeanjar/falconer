@@ -31,7 +31,7 @@ class Uneditable extends Ruler
 
 
 
-        foreach ($definition[$index][Cdc_Definition::TYPE_RULE] as $rule)
+        foreach ($definition[$index][\Falconer\Definition::TYPE_RULE] as $rule)
         {
             $name = reset($rule);
             if ($name == '\Falconer\Rule\Required')

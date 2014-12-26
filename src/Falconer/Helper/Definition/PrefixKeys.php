@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class PrefixKeys extends DefinitionHelper
 {
@@ -22,7 +22,7 @@ class PrefixKeys extends DefinitionHelper
         {
             foreach ($def as $key => $value)
             {
-                if ($value['type'] == Cdc_Definition::TYPE_COLUMN)
+                if ($value['type'] == \Falconer\Definition::TYPE_COLUMN)
                 {
                     $result["{$prefix}[{$index}][{$key}]"] = $value;
                 }

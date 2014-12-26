@@ -1,6 +1,6 @@
 <?php
 
-namespace FalconerHelperDefinition;
+namespace Falconer\Helper\Definition;
 
 class FileColumn extends DefinitionHelper
 {
@@ -36,18 +36,18 @@ class FileColumn extends DefinitionHelper
         }
 
         return array(
-            'type' => Cdc_Definition::TYPE_ATTACHMENT,
-            Cdc_Definition::TYPE_ATTACHMENT => 'arquivo',
+            'type' => \Falconer\Definition::TYPE_ATTACHMENT,
+            \Falconer\Definition::TYPE_ATTACHMENT => 'arquivo',
             //'data_format' => 'json',
-            Cdc_Definition::TYPE_WIDGET => array(
+            \Falconer\Definition::TYPE_WIDGET => array(
                 'widget' => $widget,
                 'attributes' =>
                 array(
                     'attachment_relation' => $preset,
                 ),
             ),
-            Cdc_Definition::OPERATION => $operations,
-            Cdc_Definition::TYPE_RULE => $rules,
+            \Falconer\Definition::OPERATION => $operations,
+            \Falconer\Definition::TYPE_RULE => $rules,
         );
     }
 }
