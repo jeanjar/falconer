@@ -66,16 +66,8 @@ class Users extends Model
             'users' => DefinitionHelperFactory::get('Relation'),
             'id' => DefinitionHelperFactory::get('PrimaryColumn'),
             'name' => DefinitionHelperFactory::get('TextColumn', []),
-            'email' => DefinitionHelperFactory::get('TextColumn', [
-                'operations' => [
-                    'login' => [],
-                ],
-            ]),
-            'password' => DefinitionHelperFactory::get('PasswordColumn', [
-                'operations' => [
-                    'login' => [],
-                ],
-            ]),
+            'email' => DefinitionHelperFactory::get('TextColumn'),
+            'password' => DefinitionHelperFactory::get('PasswordColumn'),
         );
     }
 
