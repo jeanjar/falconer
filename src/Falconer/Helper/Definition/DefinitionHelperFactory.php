@@ -11,7 +11,14 @@ class DefinitionHelperFactory
             $args['operations'] = array();
         }
 
-        $f_class = ucfirst('Falconer\Helper\Definition\\' . $class);
+        if(isset($args['namespace']))
+        {
+            $namespace = $args['namespace'];
+        } else {
+            $namespace = 'Falconer\Helper\Definition\\';
+        }
+
+        $f_class = ucfirst($namespace . $class);
         return $f_class::getStruct($args);
     }
 }
