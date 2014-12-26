@@ -29,18 +29,18 @@ class PasswordColumn extends DefinitionHelper
             ),
         );
 
-        if ($confirmation)
+        if (isset($confirmation_field))
         {
-            $result[\Falconer\Definition::TYPE_RULE][] = array('Cdc_Rule_CompareFields', array($confirmation, label($confirmation)));
+            $result[\Falconer\Definition::TYPE_RULE][] = array('\Falconer\Rule\CompareFields', array($confirmation, label($confirmation)));
         }
-        else
+        else if (isset($is_confirmation))
         {
             // Caso não haja confirmação significa que já é o campo de confirmação
             // que está sendo definido. Este atributo sinaliza que esta coluna deve
             // ser excluída na hora de construir o sql.
             $result[\Falconer\Definition::OPERATION]['create']['virtual'] = true;
         }
-        if ($classes_str)
+        if (isset($classes_str))
         {
             $result[\Falconer\Definition::TYPE_WIDGET]['attributes']['class'] = $classes_str;
         }
